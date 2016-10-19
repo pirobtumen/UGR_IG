@@ -34,7 +34,7 @@ CC = g++
 default : $(BIN)/$(TARGETS)
 
 # regla de ejecucion
-$(BIN)/$(TARGETS) : $(OBJ)/main.o $(OBJ)/cube.o $(OBJ)/object3d.o $(OBJ)/polyhedron.o $(OBJ)/tetrahedron.o $(OBJ)/file_ply_stl.o
+$(BIN)/$(TARGETS) : $(OBJ)/main.o $(OBJ)/revolutionsurface.o $(OBJ)/cube.o $(OBJ)/object3d.o $(OBJ)/polyhedron.o $(OBJ)/tetrahedron.o $(OBJ)/file_ply_stl.o
 	$(CC) -o $@ $^ $(CXXFLAGS) $(LDFLAGS)
 
 $(OBJ)/%.o : $(SRC)/%.cc
