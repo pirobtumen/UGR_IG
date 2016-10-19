@@ -27,6 +27,7 @@
 
 #include <vector>
 #include "vertex.h"
+#include "file_ply_stl.h"
 
 #include "polyhedron.hpp"
 #include "cube.hpp"
@@ -54,9 +55,10 @@ int UI_window_pos_x=50,UI_window_pos_y=50,UI_window_width=800,UI_window_height=8
 // ----------------------------------------------------------------------------
 
 enum DrawMode { POINTS, EDGES, SURFACES, CHESS, ALL };
-enum DrawItem { CUBE, TETRAHEDRON };
+enum DrawItem { CUBE, TETRAHEDRON, FILE_MODEL };
 
 Cube cube;
+Polyhedron file_model;
 Tetrahedron tetrahedron;
 
 DrawMode draw_mode = POINTS;
@@ -64,6 +66,33 @@ DrawItem draw_item = TETRAHEDRON;
 
 // Funciones
 // ----------------------------------------------------------------------------
+
+void read_polygon_from_file(char * filename, Polyhedron & model){
+	_file_ply ply_reader;
+	vector<float> vertex;
+	vector<int> faces;
+
+	unsigned int num_vertex;
+	unsigned int num_faces;
+
+	ply_reader.open(filename);
+	ply_reader.read(vertex, faces);
+	ply_reader.close();
+
+	num_vertex = vertex.size();
+	num_faces  = faces.size();
+
+	model.clear();
+	model.set_num_vertex(num_vertex/3);
+	model.set_num_faces(num_faces/3);
+
+	for( int i = 0; i < num_vertex; i+=3)
+		model.add_point(vertex[i], vertex[i+1], vertex[i+2]);
+
+	for( int i = 0; i < num_faces; i+=3)
+		model.add_face(faces[i], faces[i+1], faces[i+2]);
+
+}
 
 void draw_polyhedron( const Polyhedron & polyhedron ){
 
@@ -100,6 +129,9 @@ void draw(){
 			break;
 		case TETRAHEDRON:
 			draw_polyhedron(tetrahedron);
+			break;
+		case FILE_MODEL:
+			draw_polyhedron(file_model);
 			break;
 	}
 
@@ -288,6 +320,9 @@ void special_keys(int Tecla1,int x,int y)
 		case GLUT_KEY_F2:
 			draw_item = CUBE;
 			break;
+		case GLUT_KEY_F3:
+			draw_item = FILE_MODEL;
+			break;
 		}
 	glutPostRedisplay();
 }
@@ -334,6 +369,9 @@ void initialize(void)
 int main(int argc, char **argv)
 {
 
+	char filename[] = "./modelos/big_porsche.ply";
+	read_polygon_from_file(filename, file_model);
+
 	// ------------------------------------------------------------------------
 
 	// se llama a la inicialización de glut
@@ -358,7 +396,7 @@ int main(int argc, char **argv)
 
 	// llamada para crear la ventana, indicando el titulo (no se visualiza hasta que se llama
 	// al bucle de eventos)
-	glutCreateWindow("Práctica 1");
+	glutCreateWindow("IG - Practica");
 
 	// asignación de la funcion llamada "dibujar" al evento de dibujo
 	glutDisplayFunc(draw_scene);

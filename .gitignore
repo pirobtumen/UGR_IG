@@ -1,2 +1,4 @@
 obj/*.o
 bin/*
+modelos/*
+modelos2/*

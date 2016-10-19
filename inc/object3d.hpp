@@ -32,7 +32,12 @@ public:
 
 	// Modificadores
 	// ---------------------------------------------------------------------------
-	void set_point(index pos, const point & point);
+  void add_point(coordinate x, coordinate y, coordinate z);
+  void set_point(index pos, const point & point);
+
+  void set_num_vertex(unsigned int num);
+
+  void clear();
 
 	// Consultores
 	// ---------------------------------------------------------------------------

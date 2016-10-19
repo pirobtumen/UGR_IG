@@ -35,6 +35,26 @@ void Polyhedron::draw_triangles(GLenum mode,int start=0, int interval=1) const{
 
 // -----------------------------------------------------------------------------
 
+void Polyhedron::add_face(index a, index b, index c){
+	faces.push_back( Polyhedron::face(a,b,c) );
+}
+
+// -----------------------------------------------------------------------------
+
+void Polyhedron::set_num_faces(unsigned int num){
+	faces.reserve(num);
+}
+
+// -----------------------------------------------------------------------------
+
+void Polyhedron::clear(){
+	Object3D::clear();
+
+	faces.clear();
+}
+
+// -----------------------------------------------------------------------------
+
 void Polyhedron::set_face(index pos, index a, index b, index c){
 	/*
 	 * Establece una cara del modelo.
@@ -113,7 +133,7 @@ void Polyhedron::draw_all() const{
 	 * Dibuja las caras alternando el color de la cara.
 	 */
 
-	 draw_points(1,0,0);
-	 draw_edges(0,1,0);
-	 draw_surfaces(0,0,0);
+	 draw_points(0,0,0);
+	 draw_edges(0,0,1);
+	 draw_surfaces(1,0,1);
 }

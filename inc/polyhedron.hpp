@@ -48,7 +48,11 @@ public:
 
 	// Modificadores
 	// ---------------------------------------------------------------------------
+	void add_face(index a, index b, index c);
 	void set_face(index pos, index a, index b, index c);
+
+	void set_num_faces(unsigned int num);
+	void clear();
 
 	// Consultores
 	// ---------------------------------------------------------------------------

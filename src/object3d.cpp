@@ -8,6 +8,24 @@ Object3D::Object3D(){}
 
 // -----------------------------------------------------------------------------
 
+void Object3D::clear(){
+  points.clear();
+}
+
+// -----------------------------------------------------------------------------
+
+void Object3D::set_num_vertex(unsigned int num){
+  points.reserve(num);
+}
+
+// -----------------------------------------------------------------------------
+
+void Object3D::add_point(coordinate x, coordinate y, coordinate z){
+  points.push_back(Object3D::point(x,y,z));
+}
+
+// -----------------------------------------------------------------------------
+
 // Prec: pos <= points.size()
 void Object3D::set_point(index pos, const point & point){
   points[pos] = point;
