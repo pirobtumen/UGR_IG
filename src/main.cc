@@ -32,6 +32,7 @@
 #include "polyhedron.hpp"
 #include "cube.hpp"
 #include "tetrahedron.hpp"
+#include "revolutionsurface.hpp"
 
 // tamaño de los ejes
 const int AXIS_SIZE=5000;
@@ -55,14 +56,18 @@ int UI_window_pos_x=50,UI_window_pos_y=50,UI_window_width=800,UI_window_height=8
 // ----------------------------------------------------------------------------
 
 enum DrawMode { POINTS, EDGES, SURFACES, CHESS, ALL };
-enum DrawItem { CUBE, TETRAHEDRON, FILE_MODEL };
+enum DrawItem { CUBE, TETRAHEDRON, FILE_MODEL, REVOLUTION };
+enum SelectIem { ONE, TWO, THREE, FOUR, FIVE };
 
 Cube cube;
 Polyhedron file_model;
 Tetrahedron tetrahedron;
+RevolutionSurface cylinder;
+RevolutionSurface glass;
 
 DrawMode draw_mode = POINTS;
 DrawItem draw_item = TETRAHEDRON;
+SelectIem select_item = ONE;
 
 // Funciones
 // ----------------------------------------------------------------------------
@@ -132,6 +137,19 @@ void draw(){
 			break;
 		case FILE_MODEL:
 			draw_polyhedron(file_model);
+			break;
+		case REVOLUTION:
+
+			switch (select_item) {
+				case ONE:
+					draw_polyhedron(glass);
+					break;
+				case TWO:
+					draw_polyhedron(cylinder);
+					break;
+
+			}
+
 			break;
 	}
 
@@ -289,6 +307,14 @@ void normal_keys(unsigned char Tecla1,int x,int y)
 		case 'T':
 			draw_mode = ALL;
 			break;
+
+		case '1':
+			select_item = ONE;
+			break;
+
+		case '2':
+			select_item = TWO;
+			break;
 	}
 
 	glutPostRedisplay();
@@ -323,7 +349,11 @@ void special_keys(int Tecla1,int x,int y)
 		case GLUT_KEY_F3:
 			draw_item = FILE_MODEL;
 			break;
+		case GLUT_KEY_F4:
+			draw_item = REVOLUTION;
+			break;
 		}
+
 	glutPostRedisplay();
 }
 
@@ -369,10 +399,34 @@ void initialize(void)
 int main(int argc, char **argv)
 {
 
+	vector<RevolutionSurface::point> points;
+
 	char filename[] = "./modelos/big_porsche.ply";
 	read_polygon_from_file(filename, file_model);
 
-	// ------------------------------------------------------------------------
+	// Cilindro
+	// ---------------------------------------------------------------------------
+
+	points.push_back(RevolutionSurface::point(0,1,0));
+	points.push_back(RevolutionSurface::point(0,-1,0));
+	points.push_back(RevolutionSurface::point(1,1,0));
+	points.push_back(RevolutionSurface::point(1,-1,0));
+
+	cylinder.set_points(points);
+	cylinder.spin(10);
+
+	// Glass
+	// ---------------------------------------------------------------------------
+
+	points.clear();
+	points.push_back(RevolutionSurface::point(0,-1,0));
+	points.push_back(RevolutionSurface::point(1,-1,0));
+	points.push_back(RevolutionSurface::point(2,1,0));
+
+	glass.set_points(points);
+	glass.spin(10);
+
+	// ---------------------------------------------------------------------------
 
 	// se llama a la inicialización de glut
 	glutInit(&argc, argv);
