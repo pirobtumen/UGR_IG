@@ -1,8 +1,17 @@
+// Informática Gráfica
+//
+// Alberto Sola - 2016
+// -----------------------------------------------------------------------------
+
 #include "revolutionsurface.hpp"
+
+// -----------------------------------------------------------------------------
 
 RevolutionSurface::RevolutionSurface(){
   surface_points_number = 0;
 }
+
+// -----------------------------------------------------------------------------
 
 RevolutionSurface::RevolutionSurface( const vector_points & points ){
 
@@ -11,12 +20,16 @@ RevolutionSurface::RevolutionSurface( const vector_points & points ){
 
 }
 
+// -----------------------------------------------------------------------------
+
 RevolutionSurface::RevolutionSurface( const vector_points & points, unsigned int num_surfaces ){
 
   set_points(points);
   spin(num_surfaces);
 
 }
+
+// -----------------------------------------------------------------------------
 
 void RevolutionSurface::set_points( const vector_points & surface_points ){
   /*
@@ -48,11 +61,15 @@ void RevolutionSurface::set_points( const vector_points & surface_points ){
   }
 }
 
+// -----------------------------------------------------------------------------
+
 void RevolutionSurface::spin( unsigned int num_surfaces ){
   generate_points(num_surfaces);
   generate_surfaces(num_surfaces);
   generate_covers(num_surfaces);
 }
+
+// -----------------------------------------------------------------------------
 
 void RevolutionSurface::generate_points( unsigned int num_surfaces ){
 
@@ -91,6 +108,8 @@ void RevolutionSurface::generate_points( unsigned int num_surfaces ){
   }
 
 }
+
+// -----------------------------------------------------------------------------
 
 void RevolutionSurface::generate_surfaces( unsigned int num_surfaces ){
   /*
@@ -164,6 +183,8 @@ void RevolutionSurface::generate_surfaces( unsigned int num_surfaces ){
 
 }
 
+// -----------------------------------------------------------------------------
+
 void RevolutionSurface::generate_covers( unsigned int num_surfaces ){
   /*
     Conecta el primer punto que encuentre en el eje, con el primer punto del
@@ -221,3 +242,5 @@ void RevolutionSurface::generate_covers( unsigned int num_surfaces ){
   }
 
 }
+
+// -----------------------------------------------------------------------------

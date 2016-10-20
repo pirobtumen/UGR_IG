@@ -1,9 +1,6 @@
 // Informática Gráfica
 //
-// Práctica 1. Modelado de objetos.
-//
 // Alberto Sola - 2016
-
 // -----------------------------------------------------------------------------
 
 #ifndef __POLYHEDRON_HPP

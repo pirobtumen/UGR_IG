@@ -1,8 +1,8 @@
 // Informática Gráfica
 //
 // Alberto Sola - 2016
-
 // -----------------------------------------------------------------------------
+
 
 #ifndef _REV_SURFACE
 #define _REV_SURFACE

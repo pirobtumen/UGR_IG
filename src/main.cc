@@ -73,7 +73,6 @@ RevolutionSurface cone;
 RevolutionSurface tube;
 RevolutionSurface pawn;
 
-
 DrawMode draw_mode = POINTS;
 DrawItem draw_item = TETRAHEDRON;
 SelectIem select_item = ONE;
@@ -108,6 +107,8 @@ void read_polygon_from_file(char * filename, Polyhedron & model){
 
 }
 
+// -----------------------------------------------------------------------------
+
 void draw_polyhedron( const Polyhedron & polyhedron ){
 
 	switch (draw_mode) {
@@ -129,6 +130,8 @@ void draw_polyhedron( const Polyhedron & polyhedron ){
 	}
 
 }
+
+// -----------------------------------------------------------------------------
 
 void draw(){
 	/*
@@ -187,6 +190,8 @@ void draw(){
 
 }
 
+// -----------------------------------------------------------------------------
+
 void read_models(){
 	char filename1[] = "./modelos/ant.ply";
 	char filename2[] = "./modelos/big_porsche.ply";
@@ -196,6 +201,8 @@ void read_models(){
 	read_polygon_from_file(filename2, file_model2);
 	read_polygon_from_file(filename3, file_model3);
 }
+
+// -----------------------------------------------------------------------------
 
 void generate_models(){
 
@@ -279,6 +286,8 @@ void generate_models(){
 	pawn.spin(NUM_SURFACES);
 
 }
+
+
 //**************************************************************************
 //
 //***************************************************************************
@@ -493,7 +502,6 @@ void special_keys(int Tecla1,int x,int y)
 }
 
 
-
 //***************************************************************************
 // Funcion de incializacion
 //***************************************************************************
@@ -533,7 +541,8 @@ void initialize(void)
 
 int main(int argc, char **argv)
 {
-
+	// Cargamos los modelos en memoria
+	// ---------------------------------------------------------------------------
 	read_models();
 	generate_models();
 
