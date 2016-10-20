@@ -234,9 +234,20 @@ void generate_models(){
 	// ---------------------------------------------------------------------------
 
 	points.clear();
-	points.push_back(RevolutionSurface::point(0,-1,0));
-	points.push_back(RevolutionSurface::point(1,-1,0));
-	points.push_back(RevolutionSurface::point(2,1,0));
+	points.push_back(RevolutionSurface::point(0,-1.4,0)); // Base inferior
+	points.push_back(RevolutionSurface::point(0,1.4,0)); // Base superior
+
+	points.push_back(RevolutionSurface::point(1,-1.4,0)); // Base inferior
+	points.push_back(RevolutionSurface::point(1,-1.1,0));
+	points.push_back(RevolutionSurface::point(0.5,-0.7,0));
+	points.push_back(RevolutionSurface::point(0.4,-0.4,0));
+	points.push_back(RevolutionSurface::point(0.4,0.5,0));
+	points.push_back(RevolutionSurface::point(0.5,0.6,0));
+	points.push_back(RevolutionSurface::point(0.3,0.6,0));
+	points.push_back(RevolutionSurface::point(0.5,0.8,0));
+	points.push_back(RevolutionSurface::point(0.55,1,0));
+	points.push_back(RevolutionSurface::point(0.5,1.2,0));
+	points.push_back(RevolutionSurface::point(0.3,1.4,0)); // Base superior
 
 	pawn.set_points(points);
 	pawn.spin(NUM_SURFACES);
