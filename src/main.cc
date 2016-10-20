@@ -60,8 +60,12 @@ enum DrawItem { CUBE, TETRAHEDRON, FILE_MODEL, REVOLUTION };
 enum SelectIem { ONE, TWO, THREE, FOUR, FIVE, SIX };
 
 Cube cube;
-Polyhedron file_model;
 Tetrahedron tetrahedron;
+
+Polyhedron file_model;
+Polyhedron file_model2;
+Polyhedron file_model3;
+
 RevolutionSurface cylinder;
 RevolutionSurface glass;
 RevolutionSurface inv_glass;
@@ -141,8 +145,20 @@ void draw(){
 			draw_polyhedron(tetrahedron);
 			break;
 		case FILE_MODEL:
-			draw_polyhedron(file_model);
+
+			switch (select_item) {
+				case ONE:
+					draw_polyhedron(file_model);
+					break;
+				case TWO:
+					draw_polyhedron(file_model2);
+					break;
+				case THREE:
+					draw_polyhedron(file_model3);
+					break;
+				}
 			break;
+
 		case REVOLUTION:
 
 			switch (select_item) {
@@ -169,6 +185,16 @@ void draw(){
 			break;
 	}
 
+}
+
+void read_models(){
+	char filename1[] = "./modelos/ant.ply";
+	char filename2[] = "./modelos/big_porsche.ply";
+	char filename3[] = "./modelos/dolphins.ply";
+
+	read_polygon_from_file(filename1, file_model);
+	read_polygon_from_file(filename2, file_model2);
+	read_polygon_from_file(filename3, file_model3);
 }
 
 void generate_models(){
@@ -508,9 +534,7 @@ void initialize(void)
 int main(int argc, char **argv)
 {
 
-	char filename[] = "./modelos/big_porsche.ply";
-	read_polygon_from_file(filename, file_model);
-
+	read_models();
 	generate_models();
 
 	// ---------------------------------------------------------------------------
