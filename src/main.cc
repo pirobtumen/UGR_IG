@@ -247,8 +247,8 @@ void generate_models(){
 
 	points.clear();
 	points.push_back(RevolutionSurface::point(0,-0.5,0));
-	points.push_back(RevolutionSurface::point(0.5,-0.5,0));
 	points.push_back(RevolutionSurface::point(0,0.5,0));
+	points.push_back(RevolutionSurface::point(0.5,-0.5,0));
 
 	cone.set_points(points);
 	cone.spin(NUM_SURFACES);
