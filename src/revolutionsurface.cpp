@@ -100,8 +100,9 @@ void RevolutionSurface::generate_surfaces( unsigned int num_surfaces ){
     Se pueden optimizar algunas operaciones.
   */
   unsigned int offset = 0;
-  unsigned int stop = surface_points_number - 1;
-  unsigned int stop2 = surface_points_number + num_surfaces - 2;
+  unsigned int stop = surface_points_number - 1;;
+  unsigned int stop2;
+  unsigned int stop3;
 
   faces.clear();
 
@@ -110,44 +111,55 @@ void RevolutionSurface::generate_surfaces( unsigned int num_surfaces ){
 
   // TODO: Reorientar dibujo de una cara
   // Dibuja las caras que implican los puntos del perfil definido
+
   for( int i = offset; i < stop; i++ ){
 
     faces.push_back( RevolutionSurface::face(
       i,
-      (i+surface_points_number-offset)+(num_surfaces-1)*(i-offset),
-      i+1) );
+      surface_points_number+(num_surfaces-1)*(i-offset),
+      i+1
+    ));
 
     faces.push_back( RevolutionSurface::face(
       i+1,
-      (i+surface_points_number-offset)+(num_surfaces-1)*(i-offset),
-      (i+surface_points_number-offset)+(num_surfaces-1)*(i-offset+1)
+      surface_points_number+(num_surfaces-1)*(i-offset),
+      surface_points_number+(num_surfaces-1)*(i-offset+1)
     ));
 
-    // Opposite
+    // Opuestas
     faces.push_back( RevolutionSurface::face(
       i,
-      (i+surface_points_number-offset)+(num_surfaces-1)*(i-offset)+num_surfaces-2,
-      i+1) );
+      surface_points_number+(num_surfaces-1)*(i-offset)+num_surfaces-2,
+      i+1
+    ));
 
     faces.push_back( RevolutionSurface::face(
       i+1,
-      (i+surface_points_number-offset)+(num_surfaces-1)*(i-offset)+num_surfaces-2,
-      (i+surface_points_number-offset)+(num_surfaces-1)*(i-offset+1)+num_surfaces-2
+      surface_points_number+(num_surfaces-1)*(i-offset)+num_surfaces-2,
+      surface_points_number+(num_surfaces-1)*(i-offset+1)+num_surfaces-2
     ));
+
   }
 
+  stop2 = surface_points_number - offset - 1;
+
   // Dibuja el resto de caras de los puntos generados
-  for( int i = surface_points_number; i < stop2; i++ ){
+  for( int i = 0; i < stop2; i++ ){
+    stop3 = surface_points_number+(num_surfaces-1)*i + num_surfaces -2;
 
-    faces.push_back( RevolutionSurface::face(
-      i,
-      i+1,
-      i+num_surfaces-1) );
+    for( int j = surface_points_number+(num_surfaces-1)*i; j < stop3; j++ ){
 
-    faces.push_back( RevolutionSurface::face(
-      i+1,
-      i+num_surfaces,
-      i+num_surfaces-1) );
+        faces.push_back( RevolutionSurface::face(
+          j,
+          j+1,
+          j+num_surfaces-1) );
+
+        faces.push_back( RevolutionSurface::face(
+          j+1,
+          j+num_surfaces-1,
+          j+num_surfaces) );
+    }
+
   }
 
 }
