@@ -18,6 +18,7 @@ private:
 
   void generate_points( unsigned int num_surfaces );
   void generate_surfaces( unsigned int num_surfaces );
+  void generate_covers( unsigned int num_surfaces );
 
 public:
   RevolutionSurface();

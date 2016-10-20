@@ -51,7 +51,7 @@ void RevolutionSurface::set_points( const vector_points & surface_points ){
 void RevolutionSurface::spin( unsigned int num_surfaces ){
   generate_points(num_surfaces);
   generate_surfaces(num_surfaces);
-  //generate_covers();
+  generate_covers(num_surfaces);
 }
 
 void RevolutionSurface::generate_points( unsigned int num_surfaces ){
@@ -148,6 +148,64 @@ void RevolutionSurface::generate_surfaces( unsigned int num_surfaces ){
       i+1,
       i+num_surfaces,
       i+num_surfaces-1) );
+  }
+
+}
+
+void RevolutionSurface::generate_covers( unsigned int num_surfaces ){
+  /*
+    Conecta el primer punto que encuentre en el eje, con el primer punto del
+    perfil.
+    Si hay un segundo punto en el eje, lo conecta con el último punto del
+    perfil.
+  */
+  unsigned int offset = 0;
+  int stop;
+
+  while( points[offset].x == 0 && points[offset].z == 0 )
+    offset++;
+
+  if(offset > 0 ){
+    faces.push_back( RevolutionSurface::face(
+      0,    // Primer punto en el eje
+      surface_points_number,
+      offset) );
+
+    faces.push_back( RevolutionSurface::face(
+      0,    // Primer punto en el eje
+      surface_points_number+num_surfaces-2,
+      offset) );
+
+    stop = surface_points_number + num_surfaces-2;
+
+    for( int i = surface_points_number; i < stop; i++){
+      faces.push_back( RevolutionSurface::face(
+        0,    // Primer punto en el eje
+        i,
+        i+1) );
+    }
+
+  }
+
+  if(offset == 2){
+    faces.push_back( RevolutionSurface::face(
+      1,    // Primer punto en el eje
+      surface_points_number+(surface_points_number-offset-1)*(num_surfaces-1),
+      surface_points_number-1) );
+
+    faces.push_back( RevolutionSurface::face(
+      1,    // Primer punto en el eje
+      surface_points_number+num_surfaces-2+(surface_points_number-offset-1)*(num_surfaces-1),
+      surface_points_number-1) );
+
+    stop = surface_points_number+(surface_points_number-offset-1)*(num_surfaces-1) + num_surfaces-2;
+
+    for( int i = surface_points_number+(surface_points_number-offset-1)*(num_surfaces-1); i < stop; i++){
+      faces.push_back( RevolutionSurface::face(
+        1,    // Primer punto en el eje
+        i,
+        i+1) );
+    }
   }
 
 }
