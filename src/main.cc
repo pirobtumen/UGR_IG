@@ -179,10 +179,10 @@ void generate_models(){
 	// Cilindro
 	// ---------------------------------------------------------------------------
 
-	points.push_back(RevolutionSurface::point(0,1,0));
-	points.push_back(RevolutionSurface::point(0,-1,0));
-	points.push_back(RevolutionSurface::point(1,1,0));
-	points.push_back(RevolutionSurface::point(1,-1,0));
+	points.push_back(RevolutionSurface::point(0,0.5,0));
+	points.push_back(RevolutionSurface::point(0,-0.5,0));
+	points.push_back(RevolutionSurface::point(0.5,0.5,0));
+	points.push_back(RevolutionSurface::point(0.5,-0.5,0));
 
 	cylinder.set_points(points);
 	cylinder.spin(NUM_SURFACES);
@@ -191,9 +191,9 @@ void generate_models(){
 	// ---------------------------------------------------------------------------
 
 	points.clear();
-	points.push_back(RevolutionSurface::point(0,-1,0));
-	points.push_back(RevolutionSurface::point(1,-1,0));
-	points.push_back(RevolutionSurface::point(2,1,0));
+	points.push_back(RevolutionSurface::point(0,-0.5,0));
+	points.push_back(RevolutionSurface::point(0.5,-0.5,0));
+	points.push_back(RevolutionSurface::point(0.75,0.5,0));
 
 	glass.set_points(points);
 	glass.spin(NUM_SURFACES);
@@ -202,9 +202,9 @@ void generate_models(){
 	// ---------------------------------------------------------------------------
 
 	points.clear();
-	points.push_back(RevolutionSurface::point(0,1,0));
-	points.push_back(RevolutionSurface::point(1,1,0));
-	points.push_back(RevolutionSurface::point(2,-1,0));
+	points.push_back(RevolutionSurface::point(0,0.5,0));
+	points.push_back(RevolutionSurface::point(0.5,0.5,0));
+	points.push_back(RevolutionSurface::point(0.75,-0.5,0));
 
 	inv_glass.set_points(points);
 	inv_glass.spin(NUM_SURFACES);
@@ -213,9 +213,9 @@ void generate_models(){
 	// ---------------------------------------------------------------------------
 
 	points.clear();
-	points.push_back(RevolutionSurface::point(0,-1,0));
-	points.push_back(RevolutionSurface::point(1,-1,0));
-	points.push_back(RevolutionSurface::point(0,1,0));
+	points.push_back(RevolutionSurface::point(0,-0.5,0));
+	points.push_back(RevolutionSurface::point(0.5,-0.5,0));
+	points.push_back(RevolutionSurface::point(0,0.5,0));
 
 	cone.set_points(points);
 	cone.spin(NUM_SURFACES);
@@ -224,8 +224,8 @@ void generate_models(){
 	// ---------------------------------------------------------------------------
 
 	points.clear();
-	points.push_back(RevolutionSurface::point(1,-1,0));
-	points.push_back(RevolutionSurface::point(1,1,0));
+	points.push_back(RevolutionSurface::point(0.5,-0.5,0));
+	points.push_back(RevolutionSurface::point(0.5,0.5,0));
 
 	tube.set_points(points);
 	tube.spin(NUM_SURFACES);
