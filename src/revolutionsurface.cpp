@@ -128,9 +128,7 @@ void RevolutionSurface::generate_surfaces( unsigned int num_surfaces ){
   while( points[offset].x == 0 && points[offset].z == 0 )
     offset++;
 
-  // TODO: Reorientar dibujo de una cara
   // Dibuja las caras que implican los puntos del perfil definido
-
   for( int i = offset; i < stop; i++ ){
 
     faces.push_back( RevolutionSurface::face(
@@ -149,13 +147,13 @@ void RevolutionSurface::generate_surfaces( unsigned int num_surfaces ){
     faces.push_back( RevolutionSurface::face(
       i,
       surface_points_number+(num_surfaces-1)*(i-offset)+num_surfaces-2,
-      i+1
+      surface_points_number+(num_surfaces-1)*(i-offset+1)+num_surfaces-2
     ));
 
     faces.push_back( RevolutionSurface::face(
-      i+1,
-      surface_points_number+(num_surfaces-1)*(i-offset)+num_surfaces-2,
-      surface_points_number+(num_surfaces-1)*(i-offset+1)+num_surfaces-2
+      i,
+      surface_points_number+(num_surfaces-1)*(i-offset+1)+num_surfaces-2,
+      i+1
     ));
 
   }
@@ -199,14 +197,15 @@ void RevolutionSurface::generate_covers( unsigned int num_surfaces ){
     offset++;
 
   if(offset > 0 ){
-    faces.push_back( RevolutionSurface::face(
-      0,    // Primer punto en el eje
-      surface_points_number,
-      offset) );
 
     faces.push_back( RevolutionSurface::face(
       0,    // Primer punto en el eje
       surface_points_number+num_surfaces-2,
+      offset) );
+
+    faces.push_back( RevolutionSurface::face(
+      0,    // Primer punto en el eje
+      surface_points_number,
       offset) );
 
     stop = surface_points_number + num_surfaces-2;
@@ -223,12 +222,12 @@ void RevolutionSurface::generate_covers( unsigned int num_surfaces ){
   if(offset == 2){
     faces.push_back( RevolutionSurface::face(
       1,    // Primer punto en el eje
-      surface_points_number+(surface_points_number-offset-1)*(num_surfaces-1),
+      surface_points_number+num_surfaces-2+(surface_points_number-offset-1)*(num_surfaces-1),
       surface_points_number-1) );
 
     faces.push_back( RevolutionSurface::face(
       1,    // Primer punto en el eje
-      surface_points_number+num_surfaces-2+(surface_points_number-offset-1)*(num_surfaces-1),
+      surface_points_number+(surface_points_number-offset-1)*(num_surfaces-1),
       surface_points_number-1) );
 
     stop = surface_points_number+(surface_points_number-offset-1)*(num_surfaces-1) + num_surfaces-2;
