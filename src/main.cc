@@ -57,13 +57,18 @@ int UI_window_pos_x=50,UI_window_pos_y=50,UI_window_width=800,UI_window_height=8
 
 enum DrawMode { POINTS, EDGES, SURFACES, CHESS, ALL };
 enum DrawItem { CUBE, TETRAHEDRON, FILE_MODEL, REVOLUTION };
-enum SelectIem { ONE, TWO, THREE, FOUR, FIVE };
+enum SelectIem { ONE, TWO, THREE, FOUR, FIVE, SIX };
 
 Cube cube;
 Polyhedron file_model;
 Tetrahedron tetrahedron;
 RevolutionSurface cylinder;
 RevolutionSurface glass;
+RevolutionSurface inv_glass;
+RevolutionSurface cone;
+RevolutionSurface tube;
+RevolutionSurface pawn;
+
 
 DrawMode draw_mode = POINTS;
 DrawItem draw_item = TETRAHEDRON;
@@ -142,12 +147,23 @@ void draw(){
 
 			switch (select_item) {
 				case ONE:
-					draw_polyhedron(glass);
-					break;
-				case TWO:
 					draw_polyhedron(cylinder);
 					break;
-
+				case TWO:
+					draw_polyhedron(glass);
+					break;
+				case THREE:
+					draw_polyhedron(inv_glass);
+					break;
+				case FOUR:
+					draw_polyhedron(cone);
+					break;
+				case FIVE:
+					draw_polyhedron(tube);
+					break;
+				case SIX:
+					draw_polyhedron(pawn);
+					break;
 			}
 
 			break;
@@ -155,7 +171,77 @@ void draw(){
 
 }
 
+void generate_models(){
 
+	const unsigned int NUM_SURFACES = 10;
+	vector<RevolutionSurface::point> points;
+
+	// Cilindro
+	// ---------------------------------------------------------------------------
+
+	points.push_back(RevolutionSurface::point(0,1,0));
+	points.push_back(RevolutionSurface::point(0,-1,0));
+	points.push_back(RevolutionSurface::point(1,1,0));
+	points.push_back(RevolutionSurface::point(1,-1,0));
+
+	cylinder.set_points(points);
+	cylinder.spin(NUM_SURFACES);
+
+	// Glass
+	// ---------------------------------------------------------------------------
+
+	points.clear();
+	points.push_back(RevolutionSurface::point(0,-1,0));
+	points.push_back(RevolutionSurface::point(1,-1,0));
+	points.push_back(RevolutionSurface::point(2,1,0));
+
+	glass.set_points(points);
+	glass.spin(NUM_SURFACES);
+
+	// Inverted Glass
+	// ---------------------------------------------------------------------------
+
+	points.clear();
+	points.push_back(RevolutionSurface::point(0,1,0));
+	points.push_back(RevolutionSurface::point(1,1,0));
+	points.push_back(RevolutionSurface::point(2,-1,0));
+
+	inv_glass.set_points(points);
+	inv_glass.spin(NUM_SURFACES);
+
+	// Cone
+	// ---------------------------------------------------------------------------
+
+	points.clear();
+	points.push_back(RevolutionSurface::point(0,-1,0));
+	points.push_back(RevolutionSurface::point(1,-1,0));
+	points.push_back(RevolutionSurface::point(0,1,0));
+
+	cone.set_points(points);
+	cone.spin(NUM_SURFACES);
+
+	// Tube
+	// ---------------------------------------------------------------------------
+
+	points.clear();
+	points.push_back(RevolutionSurface::point(1,-1,0));
+	points.push_back(RevolutionSurface::point(1,1,0));
+
+	tube.set_points(points);
+	tube.spin(NUM_SURFACES);
+
+	// Pawn
+	// ---------------------------------------------------------------------------
+
+	points.clear();
+	points.push_back(RevolutionSurface::point(0,-1,0));
+	points.push_back(RevolutionSurface::point(1,-1,0));
+	points.push_back(RevolutionSurface::point(2,1,0));
+
+	pawn.set_points(points);
+	pawn.spin(NUM_SURFACES);
+
+}
 //**************************************************************************
 //
 //***************************************************************************
@@ -315,6 +401,18 @@ void normal_keys(unsigned char Tecla1,int x,int y)
 		case '2':
 			select_item = TWO;
 			break;
+		case '3':
+			select_item = THREE;
+			break;
+		case '4':
+			select_item = FOUR;
+			break;
+		case '5':
+			select_item = FIVE;
+			break;
+		case '6':
+			select_item = SIX;
+			break;
 	}
 
 	glutPostRedisplay();
@@ -399,32 +497,10 @@ void initialize(void)
 int main(int argc, char **argv)
 {
 
-	vector<RevolutionSurface::point> points;
-
 	char filename[] = "./modelos/big_porsche.ply";
 	read_polygon_from_file(filename, file_model);
 
-	// Cilindro
-	// ---------------------------------------------------------------------------
-
-	points.push_back(RevolutionSurface::point(0,1,0));
-	points.push_back(RevolutionSurface::point(0,-1,0));
-	points.push_back(RevolutionSurface::point(1,1,0));
-	points.push_back(RevolutionSurface::point(1,-1,0));
-
-	cylinder.set_points(points);
-	cylinder.spin(10);
-
-	// Glass
-	// ---------------------------------------------------------------------------
-
-	points.clear();
-	points.push_back(RevolutionSurface::point(0,-1,0));
-	points.push_back(RevolutionSurface::point(1,-1,0));
-	points.push_back(RevolutionSurface::point(2,1,0));
-
-	glass.set_points(points);
-	glass.spin(10);
+	generate_models();
 
 	// ---------------------------------------------------------------------------
 
