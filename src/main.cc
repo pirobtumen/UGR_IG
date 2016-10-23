@@ -24,6 +24,7 @@
 #include "stdio.h"
 #include <GL/glut.h>
 #include <ctype.h>
+#include <iostream>
 
 #include <vector>
 #include "vertex.h"
@@ -206,7 +207,7 @@ void read_models(){
 
 void generate_models(){
 
-	const unsigned int NUM_SURFACES = 10;
+	const unsigned int NUM_SURFACES = 50;
 	vector<RevolutionSurface::point> points;
 
 	// Cilindro
@@ -545,6 +546,24 @@ int main(int argc, char **argv)
 	// ---------------------------------------------------------------------------
 	read_models();
 	generate_models();
+
+	// Comprobamos si hay triángulos degenerados -> Sólo big_porsche degenerado
+	// ---------------------------------------------------------------------------
+	/*
+	cout << "Degenerate: " << cube.has_degenerate_triangles() << endl;
+	cout << "Degenerate: " << tetrahedron.has_degenerate_triangles() << endl;
+
+	cout << "Degenerate: " << file_model.has_degenerate_triangles() << endl;
+	cout << "Degenerate: " << file_model2.has_degenerate_triangles() << endl;
+	cout << "Degenerate: " << file_model3.has_degenerate_triangles() << endl;
+
+	cout << "Degenerate: " << cylinder.has_degenerate_triangles() << endl;
+	cout << "Degenerate: " << glass.has_degenerate_triangles() << endl;
+	cout << "Degenerate: " << inv_glass.has_degenerate_triangles() << endl;
+	cout << "Degenerate: " << cone.has_degenerate_triangles() << endl;
+	cout << "Degenerate: " << tube.has_degenerate_triangles() << endl;
+	cout << "Degenerate: " << pawn.has_degenerate_triangles() << endl;
+	*/
 
 	// ---------------------------------------------------------------------------
 
