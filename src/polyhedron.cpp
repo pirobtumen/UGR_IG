@@ -164,3 +164,41 @@ bool Polyhedron::has_degenerate_triangles() const{
 
 	return degenerate;
 }
+
+// -----------------------------------------------------------------------------
+
+void Polyhedron::get_max_min_triangle_area() const{
+
+	unsigned int size = faces.size();
+
+	int max_ind = 0;
+	int min_ind = 0;
+
+	double area;
+
+	double max_area = heron_formula( points[faces[0]._0],
+												points[faces[0]._1],
+												points[faces[0]._2]);;
+	double min_area = heron_formula( points[faces[1]._0],
+												points[faces[1]._1],
+												points[faces[1]._2]);;
+
+	for( unsigned int i = 2; i < size; i++ ){
+		area = heron_formula( points[faces[i]._0],
+													points[faces[i]._1],
+													points[faces[i]._2]);
+
+		if( area > max_area ){
+			max_area = area;
+			max_ind = i;
+		}
+		else if( area < min_area){
+			min_area = area;
+			min_ind = i;
+		}
+
+	}
+
+	cout << min_ind << " - " << min_area << endl;
+	cout << max_ind << " - " << max_area << endl;
+}

@@ -565,6 +565,24 @@ int main(int argc, char **argv)
 	cout << "Degenerate: " << pawn.has_degenerate_triangles() << endl;
 	*/
 
+	// Max/Min area test
+	// ---------------------------------------------------------------------------
+	/*
+	cube.get_max_min_triangle_area();
+	tetrahedron.get_max_min_triangle_area();
+
+	file_model.get_max_min_triangle_area();
+	file_model2.get_max_min_triangle_area();
+	file_model3.get_max_min_triangle_area();
+
+	cylinder.get_max_min_triangle_area();
+	glass.get_max_min_triangle_area();
+	inv_glass.get_max_min_triangle_area();
+	cone.get_max_min_triangle_area();
+	tube.get_max_min_triangle_area();
+	pawn.get_max_min_triangle_area();
+	*/
+
 	// ---------------------------------------------------------------------------
 
 	// se llama a la inicialización de glut
