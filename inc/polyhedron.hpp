@@ -8,9 +8,11 @@
 
 
 #include <vector>
+#include <GL/glut.h>
+
 #include "vertex.h"
 #include "object3d.hpp"
-#include <GL/glut.h>
+#include "utilities.hpp"
 
 // -----------------------------------------------------------------------------
 
@@ -62,6 +64,11 @@ public:
 	void draw_surfaces(double r=0, double g=0, double b=0) const;
 	void draw_chess() const;
 	void draw_all() const;
+
+	// Otros
+	// ---------------------------------------------------------------------------
+
+	bool has_degenerate_triangles() const;
 };
 
 // -----------------------------------------------------------------------------

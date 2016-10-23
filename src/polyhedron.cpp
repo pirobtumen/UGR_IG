@@ -142,3 +142,25 @@ void Polyhedron::draw_all() const{
 	 draw_edges(0,0,1);
 	 draw_surfaces(1,0,1);
 }
+
+// -----------------------------------------------------------------------------
+
+bool Polyhedron::has_degenerate_triangles() const{
+
+	unsigned int size = faces.size();
+	bool degenerate = false;
+
+	double area;
+
+	for( unsigned int i = 0; i < size && !degenerate; i++ ){
+		area = heron_formula( points[faces[i]._0],
+													points[faces[i]._1],
+													points[faces[i]._2]);
+
+		if( area == 0 )
+			degenerate = true;
+
+	}
+
+	return degenerate;
+}
