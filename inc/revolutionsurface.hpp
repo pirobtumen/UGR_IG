@@ -13,9 +13,10 @@
 #define PI 3.1415
 
 class RevolutionSurface : public Polyhedron{
-private:
+protected:
   unsigned int surface_points_number;
 
+private:
   void generate_points( unsigned int num_surfaces );
   void generate_surfaces( unsigned int num_surfaces );
   void generate_covers( unsigned int num_surfaces );
