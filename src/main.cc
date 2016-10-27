@@ -21,7 +21,6 @@
 
 // Girar menos ángulo
 // Reducir los puntos del perfil X veces
-// Aumentar o disminuir el número de divisiones al pulsar una tecla
 // Implementar una esfera
 
 #include "stdlib.h"
@@ -38,6 +37,7 @@
 #include "cube.hpp"
 #include "tetrahedron.hpp"
 #include "revolutionsurface.hpp"
+#include "sphere.hpp"
 
 // tamaño de los ejes
 const int AXIS_SIZE=5000;
@@ -61,7 +61,7 @@ int UI_window_pos_x=50,UI_window_pos_y=50,UI_window_width=800,UI_window_height=8
 // ----------------------------------------------------------------------------
 
 enum DrawMode { POINTS, EDGES, SURFACES, CHESS, ALL };
-enum DrawItem { CUBE, TETRAHEDRON, FILE_MODEL, REVOLUTION };
+enum DrawItem { CUBE, TETRAHEDRON, FILE_MODEL, REVOLUTION, SPHERE };
 enum SelectIem { ONE, TWO, THREE, FOUR, FIVE, SIX };
 
 const int SPIN_JUMP = 1;
@@ -70,6 +70,7 @@ bool need_spin = false;
 
 Cube cube;
 Tetrahedron tetrahedron;
+Sphere sphere;
 
 Polyhedron file_model;
 Polyhedron file_model2;
@@ -149,6 +150,7 @@ void draw(){
 
 	 // Recalcular los modelos generados por revolución si es necesario
  	if( need_spin ){
+		sphere.spin(num_surfaces);
  		cylinder.spin(num_surfaces);
  		glass.spin(num_surfaces);
  		inv_glass.spin(num_surfaces);
@@ -208,6 +210,10 @@ void draw(){
 			}
 
 			break;
+
+			case SPHERE:
+				draw_polyhedron(sphere);
+				break;
 	}
 
 
@@ -231,6 +237,8 @@ void read_models(){
 void generate_models(){
 
 	vector<RevolutionSurface::point> points;
+
+	sphere.spin(num_surfaces);
 
 	// Cilindro
 	// ---------------------------------------------------------------------------
@@ -530,6 +538,9 @@ void special_keys(int Tecla1,int x,int y)
 			break;
 		case GLUT_KEY_F4:
 			draw_item = REVOLUTION;
+			break;
+		case GLUT_KEY_F5:
+			draw_item = SPHERE;
 			break;
 		}
 
