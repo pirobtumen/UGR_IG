@@ -19,6 +19,10 @@
 // C - Ajedrez
 // T - Puntos + Aristas + Sólidos
 
+// Girar menos ángulo
+// Reducir los puntos del perfil X veces
+// Aumentar o disminuir el número de divisiones al pulsar una tecla
+// Implementar una esfera
 
 #include "stdlib.h"
 #include "stdio.h"
@@ -59,6 +63,10 @@ int UI_window_pos_x=50,UI_window_pos_y=50,UI_window_width=800,UI_window_height=8
 enum DrawMode { POINTS, EDGES, SURFACES, CHESS, ALL };
 enum DrawItem { CUBE, TETRAHEDRON, FILE_MODEL, REVOLUTION };
 enum SelectIem { ONE, TWO, THREE, FOUR, FIVE, SIX };
+
+const int SPIN_JUMP = 1;
+unsigned int num_surfaces = 50;
+bool need_spin = false;
 
 Cube cube;
 Tetrahedron tetrahedron;
@@ -138,6 +146,19 @@ void draw(){
 	/*
 	 * Función encargada de dibujar un modelo.
 	 */
+
+	 // Recalcular los modelos generados por revolución si es necesario
+ 	if( need_spin ){
+ 		cylinder.spin(num_surfaces);
+ 		glass.spin(num_surfaces);
+ 		inv_glass.spin(num_surfaces);
+ 		cone.spin(num_surfaces);
+ 		tube.spin(num_surfaces);
+ 		pawn.spin(num_surfaces);
+
+ 		need_spin = false;
+ 	}
+
 	glColor3f(0,0,0);
 	glPointSize(4);
 
@@ -189,6 +210,8 @@ void draw(){
 			break;
 	}
 
+
+
 }
 
 // -----------------------------------------------------------------------------
@@ -207,7 +230,6 @@ void read_models(){
 
 void generate_models(){
 
-	const unsigned int NUM_SURFACES = 50;
 	vector<RevolutionSurface::point> points;
 
 	// Cilindro
@@ -219,7 +241,7 @@ void generate_models(){
 	points.push_back(RevolutionSurface::point(0.5,-0.5,0));
 
 	cylinder.set_points(points);
-	cylinder.spin(NUM_SURFACES);
+	cylinder.spin(num_surfaces);
 
 	// Glass
 	// ---------------------------------------------------------------------------
@@ -230,7 +252,7 @@ void generate_models(){
 	points.push_back(RevolutionSurface::point(0.75,0.5,0));
 
 	glass.set_points(points);
-	glass.spin(NUM_SURFACES);
+	glass.spin(num_surfaces);
 
 	// Inverted Glass
 	// ---------------------------------------------------------------------------
@@ -241,7 +263,7 @@ void generate_models(){
 	points.push_back(RevolutionSurface::point(0.75,-0.5,0));
 
 	inv_glass.set_points(points);
-	inv_glass.spin(NUM_SURFACES);
+	inv_glass.spin(num_surfaces);
 
 	// Cone
 	// ---------------------------------------------------------------------------
@@ -252,7 +274,7 @@ void generate_models(){
 	points.push_back(RevolutionSurface::point(0.5,-0.5,0));
 
 	cone.set_points(points);
-	cone.spin(NUM_SURFACES);
+	cone.spin(num_surfaces);
 
 	// Tube
 	// ---------------------------------------------------------------------------
@@ -262,7 +284,7 @@ void generate_models(){
 	points.push_back(RevolutionSurface::point(0.5,0.5,0));
 
 	tube.set_points(points);
-	tube.spin(NUM_SURFACES);
+	tube.spin(num_surfaces);
 
 	// Pawn
 	// ---------------------------------------------------------------------------
@@ -284,7 +306,7 @@ void generate_models(){
 	points.push_back(RevolutionSurface::point(0.3,1.4,0)); // Base superior
 
 	pawn.set_points(points);
-	pawn.spin(NUM_SURFACES);
+	pawn.spin(num_surfaces);
 
 }
 
@@ -459,6 +481,18 @@ void normal_keys(unsigned char Tecla1,int x,int y)
 			break;
 		case '6':
 			select_item = SIX;
+			break;
+
+		case '+':
+			need_spin = true;
+			num_surfaces += SPIN_JUMP;
+			break;
+
+		case '-':
+			if(num_surfaces > SPIN_JUMP){
+				need_spin = true;
+				num_surfaces -= SPIN_JUMP;
+			}
 			break;
 	}
 
