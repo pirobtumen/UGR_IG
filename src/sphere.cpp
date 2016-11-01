@@ -39,8 +39,6 @@ void Sphere::generate_profile(){
     points.push_back(p2);
   }
 
-  std::cout << points.size() << std::endl;
-
 }
 
 // -----------------------------------------------------------------------------

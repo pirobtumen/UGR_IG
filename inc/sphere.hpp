@@ -8,7 +8,6 @@
 
 #include "revolutionsurface.hpp"
 #include <cmath>
-#include <iostream>
 
 // -----------------------------------------------------------------------------
 
