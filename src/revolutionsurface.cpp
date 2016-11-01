@@ -76,7 +76,7 @@ void RevolutionSurface::generate_points( unsigned int num_surfaces ){
   unsigned int index = 0;
   unsigned int new_point_index = 0;
   point new_point;
-  double jump = 2*PI/num_surfaces;
+  double jump = 2*PI/num_surfaces; // MODIFICAR PARA NO TENER LOS 360º
   double angle = jump;
   double radius;
 

@@ -19,9 +19,7 @@
 // C - Ajedrez
 // T - Puntos + Aristas + Sólidos
 
-// Girar menos ángulo
 // Reducir los puntos del perfil X veces
-// Implementar una esfera
 
 #include "stdlib.h"
 #include "stdio.h"
