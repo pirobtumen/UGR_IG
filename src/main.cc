@@ -37,6 +37,8 @@
 #include "revolutionsurface.hpp"
 #include "sphere.hpp"
 
+#include "reguladorwatt.hpp"
+
 // tamaño de los ejes
 const int AXIS_SIZE=5000;
 
@@ -59,7 +61,7 @@ int UI_window_pos_x=50,UI_window_pos_y=50,UI_window_width=800,UI_window_height=8
 // ----------------------------------------------------------------------------
 
 enum DrawMode { POINTS, EDGES, SURFACES, CHESS, ALL };
-enum DrawItem { CUBE, TETRAHEDRON, FILE_MODEL, REVOLUTION, SPHERE };
+enum DrawItem { CUBE, TETRAHEDRON, FILE_MODEL, REVOLUTION, SPHERE, WATT };
 enum SelectIem { ONE, TWO, THREE, FOUR, FIVE, SIX };
 
 const int SPIN_JUMP = 1;
@@ -68,7 +70,6 @@ bool need_spin = false;
 
 Cube cube;
 Tetrahedron tetrahedron;
-Sphere sphere;
 
 Polyhedron file_model;
 Polyhedron file_model2;
@@ -80,6 +81,9 @@ RevolutionSurface inv_glass;
 RevolutionSurface cone;
 RevolutionSurface tube;
 RevolutionSurface pawn;
+Sphere sphere;
+
+Watt watt;
 
 DrawMode draw_mode = POINTS;
 DrawItem draw_item = TETRAHEDRON;
@@ -117,7 +121,7 @@ void read_polygon_from_file(char * filename, Polyhedron & model){
 
 // -----------------------------------------------------------------------------
 
-void draw_polyhedron( const Polyhedron & polyhedron ){
+void draw_polyhedron( const Drawable & polyhedron ){
 
 	switch (draw_mode) {
 		case POINTS:
@@ -211,6 +215,10 @@ void draw(){
 
 			case SPHERE:
 				draw_polyhedron(sphere);
+				break;
+
+			case WATT:
+				draw_polyhedron(watt);
 				break;
 	}
 
@@ -539,6 +547,9 @@ void special_keys(int Tecla1,int x,int y)
 			break;
 		case GLUT_KEY_F5:
 			draw_item = SPHERE;
+			break;
+		case GLUT_KEY_F6:
+			draw_item = WATT;
 			break;
 		}
 

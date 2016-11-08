@@ -91,6 +91,13 @@ int Polyhedron::get_num_faces() const{
 
 // -----------------------------------------------------------------------------
 
+void Polyhedron::draw_points(double r, double g, double b) const{
+	Object3D::draw_points(r,g,b);
+}
+
+
+// -----------------------------------------------------------------------------
+
 void Polyhedron::draw_edges(double r, double g, double b) const{
 	/*
 	 * Dibuja las líneas (aristas) del modelo.
@@ -120,11 +127,11 @@ void Polyhedron::draw_chess() const{
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-	glColor3f(0,1,0);
+	glColor3f(0.03,0.54,0.73);
 
 	draw_triangles(GL_FILL,0,2);
 
-	glColor3f(1,0,0);
+	glColor3f(0.03,0.22,0.52);
 
 	draw_triangles(GL_FILL,1,2);
 
@@ -138,9 +145,9 @@ void Polyhedron::draw_all() const{
 	 * Dibuja las caras alternando el color de la cara.
 	 */
 
-	 draw_points(0,0,0);
-	 draw_edges(0,0,1);
-	 draw_surfaces(1,0,1);
+	 draw_points();
+	 draw_edges(0.03,0.54,0.73);
+	 draw_surfaces(0.03,0.22,0.52);
 }
 
 // -----------------------------------------------------------------------------
