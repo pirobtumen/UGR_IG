@@ -10,10 +10,11 @@
 #include <GL/glut.h>
 
 #include "vertex.h"
+#include "drawable.hpp"
 
 // -----------------------------------------------------------------------------
 
-class Object3D{
+class Object3D : public Drawable{
 public:
   typedef float coordinate;
 	typedef unsigned int index;
@@ -45,6 +46,7 @@ public:
   // Dibujar
   // ---------------------------------------------------------------------------
   void draw_points(double r=0, double g=0, double b=0) const;
+  void draw(DrawMode mode, double r=0, double g=0, double b=0) const;
 
 };
 

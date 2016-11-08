@@ -31,6 +31,7 @@
 #include "vertex.h"
 #include "file_ply_stl.h"
 
+#include "drawable.hpp"
 #include "polyhedron.hpp"
 #include "cube.hpp"
 #include "tetrahedron.hpp"
@@ -60,7 +61,6 @@ int UI_window_pos_x=50,UI_window_pos_y=50,UI_window_width=800,UI_window_height=8
 //
 // ----------------------------------------------------------------------------
 
-enum DrawMode { POINTS, EDGES, SURFACES, CHESS, ALL };
 enum DrawItem { CUBE, TETRAHEDRON, FILE_MODEL, REVOLUTION, SPHERE, WATT };
 enum SelectIem { ONE, TWO, THREE, FOUR, FIVE, SIX };
 
@@ -123,23 +123,7 @@ void read_polygon_from_file(char * filename, Polyhedron & model){
 
 void draw_polyhedron( const Drawable & polyhedron ){
 
-	switch (draw_mode) {
-		case POINTS:
-			polyhedron.draw_points();
-			break;
-		case EDGES:
-			polyhedron.draw_edges();
-			break;
-		case SURFACES:
-			polyhedron.draw_surfaces();
-			break;
-		case CHESS:
-			polyhedron.draw_chess();
-			break;
-		case ALL:
-			polyhedron.draw_all();
-			break;
-	}
+	polyhedron.draw(draw_mode);
 
 }
 

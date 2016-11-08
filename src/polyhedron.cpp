@@ -152,6 +152,30 @@ void Polyhedron::draw_all() const{
 
 // -----------------------------------------------------------------------------
 
+void Polyhedron::draw(DrawMode mode, double r, double g, double b) const{
+
+	switch (mode) {
+		case ALL:
+			draw_all();
+			break;
+		case CHESS:
+			draw_chess();
+			break;
+		case SURFACES:
+			draw_surfaces(r,g,b);
+			break;
+		case EDGES:
+			draw_edges(r,g,b);
+			break;
+		case POINTS:
+			draw_points(r,g,b);
+			break;
+	}
+
+}
+
+// -----------------------------------------------------------------------------
+
 bool Polyhedron::has_degenerate_triangles() const{
 
 	unsigned int size = faces.size();
@@ -209,3 +233,5 @@ void Polyhedron::get_max_min_triangle_area() const{
 	cout << min_ind << " - " << min_area << endl;
 	cout << max_ind << " - " << max_area << endl;
 }
+
+// -----------------------------------------------------------------------------

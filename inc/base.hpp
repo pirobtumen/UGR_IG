@@ -24,6 +24,7 @@ public:
 	void draw_surfaces(double r=0, double g=0, double b=0) const;
 	void draw_chess() const;
 	void draw_all() const;
+  void draw(DrawMode mode, double r=0, double g=0, double b=0) const;
 };
 
 #endif

@@ -13,7 +13,6 @@
 #include "vertex.h"
 #include "object3d.hpp"
 #include "utilities.hpp"
-#include "drawable.hpp"
 
 // -----------------------------------------------------------------------------
 
@@ -30,7 +29,7 @@
  * e implementar el método abstracto "generate_faces".
  *
  */
-class Polyhedron : public Object3D, public Drawable{
+class Polyhedron : public Object3D{
 public:
 	typedef _vertex3<index> face;
 	typedef vector<face> vector_faces;
@@ -66,6 +65,7 @@ public:
 	void draw_surfaces(double r=0, double g=0, double b=0) const;
 	void draw_chess() const;
 	void draw_all() const;
+	void draw(DrawMode mode, double r=0, double g=0, double b=0) const;
 
 	// Otros
 	// ---------------------------------------------------------------------------

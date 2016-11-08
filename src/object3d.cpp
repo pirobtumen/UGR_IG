@@ -64,3 +64,13 @@ void Object3D::draw_points(double r, double g, double b) const{
 
 	glEnd();
 }
+
+// -----------------------------------------------------------------------------
+
+void Object3D::draw(DrawMode mode, double r, double g, double b) const{
+
+  draw_points(r,g,b);
+
+}
+
+// -----------------------------------------------------------------------------

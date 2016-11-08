@@ -46,3 +46,27 @@ void Watt::draw_all() const{
 }
 
 // -----------------------------------------------------------------------------
+
+void Watt::draw(DrawMode mode, double r, double g, double b) const{
+
+  switch (mode) {
+		case ALL:
+			draw_all();
+			break;
+		case CHESS:
+			draw_chess();
+			break;
+		case SURFACES:
+			draw_surfaces(r,g,b);
+			break;
+		case EDGES:
+			draw_edges(r,g,b);
+			break;
+		case POINTS:
+			draw_points(r,g,b);
+			break;
+	}
+  
+}
+
+// -----------------------------------------------------------------------------
