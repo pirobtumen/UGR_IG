@@ -121,9 +121,9 @@ void read_polygon_from_file(char * filename, Polyhedron & model){
 
 // -----------------------------------------------------------------------------
 
-void draw_polyhedron( const Drawable & polyhedron ){
+void draw_object( const Drawable & obj ){
 
-	polyhedron.draw(draw_mode);
+	obj.draw(draw_mode);
 
 }
 
@@ -152,22 +152,22 @@ void draw(){
 
 	switch (draw_item) {
 		case CUBE:
-			draw_polyhedron(cube);
+			draw_object(cube);
 			break;
 		case TETRAHEDRON:
-			draw_polyhedron(tetrahedron);
+			draw_object(tetrahedron);
 			break;
 		case FILE_MODEL:
 
 			switch (select_item) {
 				case ONE:
-					draw_polyhedron(file_model);
+					draw_object(file_model);
 					break;
 				case TWO:
-					draw_polyhedron(file_model2);
+					draw_object(file_model2);
 					break;
 				case THREE:
-					draw_polyhedron(file_model3);
+					draw_object(file_model3);
 					break;
 				}
 			break;
@@ -176,34 +176,34 @@ void draw(){
 
 			switch (select_item) {
 				case ONE:
-					draw_polyhedron(cylinder);
+					draw_object(cylinder);
 					break;
 				case TWO:
-					draw_polyhedron(glass);
+					draw_object(glass);
 					break;
 				case THREE:
-					draw_polyhedron(inv_glass);
+					draw_object(inv_glass);
 					break;
 				case FOUR:
-					draw_polyhedron(cone);
+					draw_object(cone);
 					break;
 				case FIVE:
-					draw_polyhedron(tube);
+					draw_object(tube);
 					break;
 				case SIX:
-					draw_polyhedron(pawn);
+					draw_object(pawn);
 					break;
 			}
 
 			break;
 
-			case SPHERE:
-				draw_polyhedron(sphere);
-				break;
+		case SPHERE:
+			draw_object(sphere);
+			break;
 
-			case WATT:
-				draw_polyhedron(watt);
-				break;
+		case WATT:
+			draw_object(watt);
+			break;
 	}
 
 
