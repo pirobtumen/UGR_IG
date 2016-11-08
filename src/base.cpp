@@ -18,7 +18,7 @@ Base::Base(){
 void Base::draw_points(double r, double g, double b) const{
   glPushMatrix();
   glScaled(1,0.5,1);
-  cube.draw_points();
+  cube.draw_points(r,g,b);
   glPopMatrix();
 }
 
@@ -27,7 +27,7 @@ void Base::draw_points(double r, double g, double b) const{
 void Base::draw_edges(double r, double g, double b) const{
   glPushMatrix();
   glScaled(1,0.5,1);
-  cube.draw_edges();
+  cube.draw_edges(r,g,b);
   glPopMatrix();
 }
 
@@ -36,7 +36,7 @@ void Base::draw_edges(double r, double g, double b) const{
 void Base::draw_surfaces(double r, double g, double b) const{
   glPushMatrix();
   glScaled(1,0.5,1);
-  cube.draw_surfaces();
+  cube.draw_surfaces(r,g,b);
   glPopMatrix();
 }
 
