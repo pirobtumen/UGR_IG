@@ -75,13 +75,14 @@ Polyhedron file_model;
 Polyhedron file_model2;
 Polyhedron file_model3;
 
-RevolutionSurface cylinder;
+//RevolutionSurface cylinder;
 RevolutionSurface glass;
 RevolutionSurface inv_glass;
 RevolutionSurface cone;
 RevolutionSurface tube;
 RevolutionSurface pawn;
 Sphere sphere;
+Cylinder cylinder;
 
 Watt watt;
 
@@ -233,12 +234,6 @@ void generate_models(){
 	// Cilindro
 	// ---------------------------------------------------------------------------
 
-	points.push_back(RevolutionSurface::point(0,0.5,0));
-	points.push_back(RevolutionSurface::point(0,-0.5,0));
-	points.push_back(RevolutionSurface::point(0.5,0.5,0));
-	points.push_back(RevolutionSurface::point(0.5,-0.5,0));
-
-	cylinder.set_points(points);
 	cylinder.spin(num_surfaces);
 
 	// Glass
