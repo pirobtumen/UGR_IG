@@ -17,13 +17,19 @@ Base::Base(){
 
 void Base::draw_cube(DrawMode mode) const{
 
-  // Valores de transformacion
-  double tx = 1;
-  double ty = 0.1;
-  double tz = 1;
+  // Valores de escalado
+  double sx = 1;
+  double sy = 0.1;
+  double sz = 1;
+
+  // Valores de traslación
+  double tx = 0;
+  double ty = -0.75;
+  double tz = 0;
 
   glPushMatrix();
-  glScaled(tx,ty,tz);
+  glTranslated(tx,ty,tz);
+  glScaled(sx,sy,sz);
   cube.draw(mode);
   glPopMatrix();
 }
@@ -33,9 +39,9 @@ void Base::draw_cube(DrawMode mode) const{
 void Base::draw_cylinder(DrawMode mode) const{
 
   // Valores de transformacion
-  double tx = 0.1;
-  double ty = 1;
-  double tz = 0.1;
+  double tx = 0.05;
+  double ty = 1.5;
+  double tz = tx;
 
   glPushMatrix();
   glScaled(tx,ty,tz);
