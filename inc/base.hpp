@@ -6,8 +6,9 @@
 #ifndef __BASE_HPP
 #define __BASE_HPP
 
-#include "polyhedron.hpp"
+#include "drawable.hpp"
 #include "cube.hpp"
+#include "cylinder.hpp"
 
 // -----------------------------------------------------------------------------
 
@@ -15,16 +16,15 @@ class Base : public Drawable{
 private:
   // TODO: static
   Cube cube;
+  Cylinder cylinder;
+
+  void draw_cube(DrawMode mode) const;
+  void draw_cylinder(DrawMode mode) const;
 
 public:
   Base();
 
-  void draw_points(double r=0, double g=0, double b=0) const;
-  void draw_edges(double r=0, double g=0, double b=0) const;
-	void draw_surfaces(double r=0, double g=0, double b=0) const;
-	void draw_chess() const;
-	void draw_all() const;
-  void draw(DrawMode mode, double r=0, double g=0, double b=0) const;
+  void draw(DrawMode mode) const;
 };
 
 #endif

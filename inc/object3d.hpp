@@ -46,7 +46,7 @@ public:
   // Dibujar
   // ---------------------------------------------------------------------------
   void draw_points(double r=0, double g=0, double b=0) const;
-  void draw(DrawMode mode, double r=0, double g=0, double b=0) const;
+  void draw(DrawMode mode) const;
 
 };
 

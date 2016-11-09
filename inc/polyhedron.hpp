@@ -62,10 +62,10 @@ public:
 	// ---------------------------------------------------------------------------
 	void draw_points(double r=0, double g=0, double b=0) const;
 	void draw_edges(double r=0, double g=0, double b=0) const;
-	void draw_surfaces(double r=0, double g=0, double b=0) const;
+	void draw_surfaces(double r=0.02, double g=0.22, double b=0.52) const;
 	void draw_chess() const;
 	void draw_all() const;
-	void draw(DrawMode mode, double r=0, double g=0, double b=0) const;
+	void draw(DrawMode mode) const;
 
 	// Otros
 	// ---------------------------------------------------------------------------

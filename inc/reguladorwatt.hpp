@@ -7,7 +7,6 @@
 #define __RWATT_HPP
 
 #include "base.hpp"
-#include "polyhedron.hpp"
 
 // -----------------------------------------------------------------------------
 
@@ -18,12 +17,7 @@ private:
 public:
   Watt();
 
-  void draw_points(double r=0, double g=0, double b=0) const;
-  void draw_edges(double r=0, double g=0, double b=0) const;
-	void draw_surfaces(double r=0, double g=0, double b=0) const;
-	void draw_chess() const;
-	void draw_all() const;
-  void draw(DrawMode mode, double r=0, double g=0, double b=0) const;
+  void draw(DrawMode mode) const;
 };
 
 #endif

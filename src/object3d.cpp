@@ -67,7 +67,11 @@ void Object3D::draw_points(double r, double g, double b) const{
 
 // -----------------------------------------------------------------------------
 
-void Object3D::draw(DrawMode mode, double r, double g, double b) const{
+void Object3D::draw(DrawMode mode) const{
+
+  double r = 0;
+  double g = 0;
+  double b = 0;
 
   draw_points(r,g,b);
 

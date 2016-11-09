@@ -10,74 +10,46 @@
 // -----------------------------------------------------------------------------
 
 Base::Base(){
-  draw_all();
+  draw(DrawMode::ALL);
 }
 
 // -----------------------------------------------------------------------------
 
-void Base::draw_points(double r, double g, double b) const{
+void Base::draw_cube(DrawMode mode) const{
+
+  // Valores de transformacion
+  double tx = 1;
+  double ty = 0.1;
+  double tz = 1;
+
   glPushMatrix();
-  glScaled(1,0.5,1);
-  cube.draw_points(r,g,b);
+  glScaled(tx,ty,tz);
+  cube.draw(mode);
   glPopMatrix();
 }
 
 // -----------------------------------------------------------------------------
 
-void Base::draw_edges(double r, double g, double b) const{
+void Base::draw_cylinder(DrawMode mode) const{
+
+  // Valores de transformacion
+  double tx = 0.1;
+  double ty = 1;
+  double tz = 0.1;
+
   glPushMatrix();
-  glScaled(1,0.5,1);
-  cube.draw_edges(r,g,b);
+  glScaled(tx,ty,tz);
+  cylinder.draw(mode);
   glPopMatrix();
+
 }
 
 // -----------------------------------------------------------------------------
 
-void Base::draw_surfaces(double r, double g, double b) const{
-  glPushMatrix();
-  glScaled(1,0.5,1);
-  cube.draw_surfaces(r,g,b);
-  glPopMatrix();
-}
+void Base::draw(DrawMode mode) const{
 
-// -----------------------------------------------------------------------------
-
-void Base::draw_chess() const{
-  glPushMatrix();
-  glScaled(1,0.5,1);
-  cube.draw_chess();
-  glPopMatrix();
-}
-
-// -----------------------------------------------------------------------------
-
-void Base::draw_all() const{
-  draw_points(0,0,0);
-  draw_edges(0,0,1);
-  draw_surfaces(1,0,1);
-}
-
-// -----------------------------------------------------------------------------
-
-void Base::draw(DrawMode mode, double r, double g, double b) const{
-
-  switch (mode) {
-		case ALL:
-			draw_all();
-			break;
-		case CHESS:
-			draw_chess();
-			break;
-		case SURFACES:
-			draw_surfaces(r,g,b);
-			break;
-		case EDGES:
-			draw_edges(r,g,b);
-			break;
-		case POINTS:
-			draw_points(r,g,b);
-			break;
-	}
+  draw_cube(mode);
+  draw_cylinder(mode);
 
 }
 

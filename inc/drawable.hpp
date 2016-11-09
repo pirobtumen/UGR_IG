@@ -15,7 +15,7 @@ public:
 
   Drawable(){};
 
-  virtual void draw(DrawMode mode, double r=0, double g=0, double b=0) const=0;
+  virtual void draw(DrawMode mode) const=0;
 
 };
 

@@ -147,12 +147,12 @@ void Polyhedron::draw_all() const{
 
 	 draw_points();
 	 draw_edges(0.03,0.54,0.73);
-	 draw_surfaces(0.03,0.22,0.52);
+	 draw_surfaces();
 }
 
 // -----------------------------------------------------------------------------
 
-void Polyhedron::draw(DrawMode mode, double r, double g, double b) const{
+void Polyhedron::draw(DrawMode mode) const{
 
 	switch (mode) {
 		case ALL:
@@ -162,13 +162,13 @@ void Polyhedron::draw(DrawMode mode, double r, double g, double b) const{
 			draw_chess();
 			break;
 		case SURFACES:
-			draw_surfaces(r,g,b);
+			draw_surfaces();
 			break;
 		case EDGES:
-			draw_edges(r,g,b);
+			draw_edges();
 			break;
 		case POINTS:
-			draw_points(r,g,b);
+			draw_points();
 			break;
 	}
 
