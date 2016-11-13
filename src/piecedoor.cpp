@@ -1,0 +1,30 @@
+#include "piecedoor.hpp"
+
+// -----------------------------------------------------------------------------
+
+PieceDoor::PieceDoor(){
+  draw(DrawMode::ALL);
+}
+
+// -----------------------------------------------------------------------------
+
+void PieceDoor::draw(DrawMode mode) const{
+  double sx = 0.04;
+  double sy = 1.5;
+  double sz = sx;
+
+  double tx = -0.15;
+  double ty = -0.75;
+  double tz = 0;
+
+  piece.draw(mode);
+
+  glPushMatrix();
+  glTranslated(tx,ty,tz);
+  glScaled(sx,sy,sz);
+  door.draw(mode);
+  glPopMatrix();
+
+}
+
+// -----------------------------------------------------------------------------

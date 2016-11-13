@@ -39,6 +39,12 @@
 #include "sphere.hpp"
 
 #include "reguladorwatt.hpp"
+#include "body.hpp"
+#include "arm.hpp"
+#include "arm2.hpp"
+#include "base.hpp"
+#include "piece.hpp"
+#include "piecedoor.hpp"
 
 // tamaño de los ejes
 const int AXIS_SIZE=5000;

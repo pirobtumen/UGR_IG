@@ -3,21 +3,26 @@
 // Alberto Sola - 2016
 // -----------------------------------------------------------------------------
 
-#ifndef __RWATT_HPP
-#define __RWATT_HPP
+#ifndef __ARM2_HPP
+#define __ARM2_HPP
 
-#include "base.hpp"
-#include "body.hpp"
+#include "drawable.hpp"
+#include "arm.hpp"
+#include "cylinder.hpp"
 
 // -----------------------------------------------------------------------------
 
-class Watt : public Drawable{
+class Arm2 : public Drawable{
 private:
-  Base base;
-  Body body;
+  // TODO: static
+  Arm arm;
+  Cylinder cylinder;
+
+  void draw_arm(DrawMode mode) const;
+  void draw_cylinder(DrawMode mode) const;
 
 public:
-  Watt();
+  Arm2();
 
   void draw(DrawMode mode) const;
 };

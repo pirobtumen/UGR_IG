@@ -6,6 +6,7 @@ Sphere::Sphere(){
   surface_points_number = 50;
 
   generate_profile();
+  spin(25);
 }
 
 // -----------------------------------------------------------------------------
