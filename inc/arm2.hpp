@@ -9,6 +9,7 @@
 #include "drawable.hpp"
 #include "arm.hpp"
 #include "cylinder.hpp"
+#include "rotatevar.hpp"
 
 // -----------------------------------------------------------------------------
 
@@ -23,6 +24,9 @@ private:
 
 public:
   Arm2();
+
+  double get_beta() const;
+  double get_cyl_length() const;
 
   void draw(DrawMode mode) const;
 };

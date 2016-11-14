@@ -24,6 +24,7 @@ private:
 public:
   Arm();
 
+  double get_alpha() const;
   void draw(DrawMode mode) const;
 };
 

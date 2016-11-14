@@ -8,6 +8,7 @@
 
 #include "base.hpp"
 #include "body.hpp"
+#include "rotatevar.hpp"
 
 // -----------------------------------------------------------------------------
 

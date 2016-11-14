@@ -20,7 +20,7 @@ void Arm::draw(DrawMode mode) const{
 
 void Arm::draw_sphere(DrawMode mode) const{
   glPushMatrix();
-  glTranslated(-1.7,0,0);
+  glTranslated(-3.2,0,0);
   glScaled(0.5,0.5,0.5);
   sphere.draw(mode);
   glPopMatrix();
@@ -30,6 +30,7 @@ void Arm::draw_sphere(DrawMode mode) const{
 
 void Arm::draw_cylinder(DrawMode mode) const{
   glPushMatrix();
+  glTranslated(-1.5,0,0);
   glRotated(90,0,0,1);
   glScaled(0.1,3,0.1);
   cylinder.draw(mode);

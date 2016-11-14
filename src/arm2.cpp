@@ -28,11 +28,24 @@ void Arm2::draw_arm(DrawMode mode) const{
 
 void Arm2::draw_cylinder(DrawMode mode) const{
   glPushMatrix();
-  glTranslated(0.75,-0.15,0);
-  glRotated(75,0,0,1);
+  glTranslated(-1.5,0,0);
+  glRotated(get_beta(),0,0,1);
+  glTranslated(0,-0.65,0);
   glScaled(0.05,1.3,0.05);
   cylinder.draw(mode);
   glPopMatrix();
+}
+
+// -----------------------------------------------------------------------------
+
+double Arm2::get_beta() const{
+  return -35+(speed/MAX_SPEED)*115;
+}
+
+// -----------------------------------------------------------------------------
+
+double Arm2::get_cyl_length() const{
+  return 1.3;
 }
 
 // -----------------------------------------------------------------------------

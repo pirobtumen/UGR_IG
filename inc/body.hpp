@@ -6,10 +6,12 @@
 #ifndef __BODY_HPP
 #define __BODY_HPP
 
+#include <cmath>
 #include "drawable.hpp"
 #include "arm2.hpp"
 #include "piece.hpp"
 #include "piecedoor.hpp"
+#include "rotatevar.hpp"
 
 // -----------------------------------------------------------------------------
 
@@ -19,6 +21,8 @@ private:
   Arm2 arm;
   Piece top;
   PieceDoor door;
+
+  double get_alpha() const;
 
   void draw_arms(DrawMode mode) const;
   void draw_top(DrawMode mode) const;

@@ -21,6 +21,8 @@
 
 // Reducir los puntos del perfil X veces
 
+#include "rotatevar.hpp"
+
 #include "stdlib.h"
 #include "stdio.h"
 #include <GL/glut.h>
@@ -124,6 +126,18 @@ void read_polygon_from_file(char * filename, Polyhedron & model){
 	for( int i = 0; i < num_faces; i+=3)
 		model.add_face(faces[i], faces[i+1], faces[i+2]);
 
+}
+
+// -----------------------------------------------------------------------------
+
+void update_model(){
+	if( rotate_angle < max_rotate )
+		rotate_angle += max_rotate*speed/1000;
+
+	else
+		rotate_angle = 0;
+
+	glutPostRedisplay();
 }
 
 // -----------------------------------------------------------------------------
@@ -493,6 +507,16 @@ void normal_keys(unsigned char Tecla1,int x,int y)
 				num_surfaces -= SPIN_JUMP;
 			}
 			break;
+
+		case 'U':
+			if(speed < MAX_SPEED)
+				speed += SPEED_INC;
+			break;
+
+		case 'Y':
+			if(speed > MIN_SPEED)
+				speed -= SPEED_INC;
+			break;
 	}
 
 	glutPostRedisplay();
@@ -659,6 +683,9 @@ int main(int argc, char **argv)
 
 	// funcion de inicialización
 	initialize();
+
+	// Cambiamos la función IDLE para que actualice el modelo
+	glutIdleFunc( update_model );
 
 	// inicio del bucle de eventos
 	glutMainLoop();
