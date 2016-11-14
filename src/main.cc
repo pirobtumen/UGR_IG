@@ -131,11 +131,11 @@ void read_polygon_from_file(char * filename, Polyhedron & model){
 // -----------------------------------------------------------------------------
 
 void update_model(){
-	if( rotate_angle < max_rotate )
-		rotate_angle += max_rotate*speed/1000;
 
-	else
-		rotate_angle = 0;
+	rotate_angle += max_rotate*speed/1000;
+
+	if(rotate_angle > max_rotate)
+		rotate_angle -= max_rotate;
 
 	glutPostRedisplay();
 }

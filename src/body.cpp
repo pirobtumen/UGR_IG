@@ -39,6 +39,7 @@ void Body::draw_arms(DrawMode mode) const{
 
 void Body::draw_top(DrawMode mode) const{
   glPushMatrix();
+  glTranslated(0,0,0);
   top.draw(mode);
   glPopMatrix();
 }
@@ -52,8 +53,6 @@ void Body::draw_door(DrawMode mode) const{
   double height = 0;
 
   height -= (arm_length/alpha)*beta;
-
-  std::cout << 90-get_alpha() << " - " << 90-arm.get_beta() << " - " << arm_length << " - " << height << std::endl;
 
   glPushMatrix();
   glTranslated(0,height,0);

@@ -22,7 +22,7 @@ void Watt::draw(DrawMode mode) const{
 
   glPushMatrix();
   glTranslated(0,0.75,0);
-  glRotated(0,0,1,0);
+  glRotated(rotate_angle,0,1,0);
   body.draw(mode);
   glPopMatrix();
 
