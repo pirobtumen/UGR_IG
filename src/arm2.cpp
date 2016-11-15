@@ -44,7 +44,7 @@ void Arm2::draw_cylinder(DrawMode mode) const{
 // -----------------------------------------------------------------------------
 
 double Arm2::get_beta() const{
-  return -35+(speed/MAX_SPEED)*116;
+  return -35+(speed/MAX_SPEED)*113;
 }
 
 // -----------------------------------------------------------------------------

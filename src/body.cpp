@@ -60,6 +60,9 @@ void Body::draw_door(DrawMode mode) const{
 
   height -= (arm_length/alpha)*beta;
 
+  if(height > -0.3)
+    height = -0.3;
+
   glPushMatrix();
   glTranslated(0,height,0);
   door.draw(mode);
