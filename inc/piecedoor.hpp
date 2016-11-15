@@ -14,9 +14,8 @@
 
 class PieceDoor : public Drawable{
 private:
-  // TODO: static
-  Piece piece;
-  Cube door;
+  static Piece piece;
+  static Cube door;
 
 public:
   PieceDoor();

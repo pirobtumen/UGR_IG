@@ -14,9 +14,8 @@
 
 class Arm : public Drawable{
 private:
-  // TODO: static
-  Sphere sphere;
-  Cylinder cylinder;
+  static Sphere sphere;
+  static Cylinder cylinder;
 
   void draw_sphere(DrawMode mode) const;
   void draw_cylinder(DrawMode mode) const;

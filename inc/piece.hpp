@@ -13,8 +13,7 @@
 
 class Piece : public Drawable{
 private:
-  // TODO: static
-  Cylinder piece;
+  static Cylinder piece;
 
 public:
   Piece();

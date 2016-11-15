@@ -17,10 +17,9 @@
 
 class Body : public Drawable{
 private:
-  // TODO: static
-  Arm2 arm;
-  Piece top;
-  PieceDoor door;
+  static Arm2 arm;
+  static Piece top;
+  static PieceDoor door;
 
   double get_alpha() const;
 

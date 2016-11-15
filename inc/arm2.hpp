@@ -15,9 +15,8 @@
 
 class Arm2 : public Drawable{
 private:
-  // TODO: static
-  Arm arm;
-  Cylinder cylinder;
+  static Arm arm;
+  static Cylinder cylinder;
 
   void draw_arm(DrawMode mode) const;
   void draw_cylinder(DrawMode mode) const;

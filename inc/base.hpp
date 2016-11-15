@@ -14,9 +14,8 @@
 
 class Base : public Drawable{
 private:
-  // TODO: static
-  Cube cube;
-  Cylinder cylinder;
+  static Cube cube;
+  static Cylinder cylinder;
 
   void draw_cube(DrawMode mode) const;
   void draw_cylinder(DrawMode mode) const;

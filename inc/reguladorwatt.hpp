@@ -14,8 +14,8 @@
 
 class Watt : public Drawable{
 private:
-  Base base;
-  Body body;
+  static Base base;
+  static Body body;
 
 public:
   Watt();
