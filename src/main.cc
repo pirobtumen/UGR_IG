@@ -103,12 +103,6 @@ SelectIem select_item = ONE;
 // Iluminación
 // -----------------------------------------------------------------------------
 
-//_vertex3<float> ambient_color_l0;
-//ambient_color_l0.r = 1;
-//ambient_color_l0.g = 1;
-//ambient_color_l0.b = 1;
-//float ambient_strength = 0.1f;
-
 GLfloat ambient_light[4] = {1,1,1,1};
 
 float light0_ambient_strength = 0.4;
@@ -287,7 +281,10 @@ void init_light(){
 
 	glShadeModel(GL_FLAT);
 
-	//glEnable(GL_COLOR_MATERIAL); // TODO: Aplicar sólo a los ejes
+	/*
+		Si quieremos que se utilice el color dado a los triángulos.
+	*/
+	//glEnable(GL_COLOR_MATERIAL);
 
 	/*
 		Si haces un glScale, independientemente de si utilizas marcos de pila
