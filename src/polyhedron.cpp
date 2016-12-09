@@ -68,17 +68,19 @@ void Polyhedron::calc_face_normal(){
 	/*
 		Calcula las normales de cada cara.
 	*/
+	unsigned int num_faces = faces.size();
 	point normal;
 	point a;
 	point b;
 	float module;
 
 	face_normals.clear();
+	face_normals.resize(num_faces);
 
-	for( const face & f : faces ){
+	for(unsigned int i = 0; i < num_faces; i++){
 		// Dado un triángulo tomamos dos vectores con un vértice en común
-		a = points[f._0] - points[f._1];
-		b = points[f._2] - points[f._1];
+		a = points[faces[i]._0] - points[faces[i]._1];
+		b = points[faces[i]._2] - points[faces[i]._1];
 
 		// Producto escalar
 
@@ -100,7 +102,7 @@ void Polyhedron::calc_face_normal(){
 		normal = b.cross_product(a);
 		normal /= normal.module();
 
-		face_normals.push_back(normal);
+		face_normals[i] = normal;
 	}
 }
 
