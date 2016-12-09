@@ -65,6 +65,9 @@ void Polyhedron::draw_triangles(GLenum mode,int start=0, int interval=1) const{
 // -----------------------------------------------------------------------------
 
 void Polyhedron::calc_face_normal(){
+	/*
+		Calcula las normales de cada cara.
+	*/
 	point normal;
 	point a;
 	point b;
@@ -73,10 +76,26 @@ void Polyhedron::calc_face_normal(){
 	face_normals.clear();
 
 	for( const face & f : faces ){
-
+		// Dado un triángulo tomamos dos vectores con un vértice en común
 		a = points[f._0] - points[f._1];
 		b = points[f._2] - points[f._1];
 
+		// Producto escalar
+
+		/*
+			El vector normal puede tener dos sentidos. Uno estará iluminado y el otro
+			no. Por tanto si al hacer un producto escalar las caras está oscuras,
+			cambiamos al otro.
+
+			Si hay caras iluminadas y otras no, esto es por el orden de los vértices
+			de cara cada.
+
+			1. Objetos de revolución: no es lo mismo instroducir el perfil de arriba
+			hacia abajo que del revés. Uno se iluminará y el otro no.
+
+			2. En este caso, tal y cómo se calculan las normales, hay que cambiar
+			x por z en las caras no iluminadas al crear dichos objetos.
+		*/
 		//normal = a.cross_product(b);
 		normal = b.cross_product(a);
 		normal /= normal.module();
@@ -88,33 +107,36 @@ void Polyhedron::calc_face_normal(){
 // -----------------------------------------------------------------------------
 
 void Polyhedron::calc_vertex_normal(){
+	/*
+		Calcula las normales de cada vértice. O(n)
+
+		Recorremos el vector de caras, y acumulamos la normal de dicha cara en
+		la futura normal de cada vértice de dicha cara.
+
+	*/
 	point zero(0,0,0);
-	vector<unsigned int> normal_count;
 	unsigned int num_vertex = points.size();
 	unsigned int num_faces = faces.size();
 
 	vertex_normals.clear();
 
+	// Inicializamos
 	vertex_normals.resize(num_vertex);
-	normal_count.resize(num_vertex);
 
-	for(unsigned int i = 0; i < num_vertex; i++){
+	for(unsigned int i = 0; i < num_vertex; i++)
 		vertex_normals[i] = zero;
-		normal_count[i] = 0;
-	}
 
+
+	// Acumulamos
 	for(unsigned int i = 0; i < num_faces; i++){
 		vertex_normals[faces[i]._0] += face_normals[i];
 		vertex_normals[faces[i]._1] += face_normals[i];
 		vertex_normals[faces[i]._2] += face_normals[i];
-
-		normal_count[faces[i]._0]++;
-		normal_count[faces[i]._1]++;
-		normal_count[faces[i]._2]++;
 	}
 
+	// Normalizamos
 	for(unsigned int i = 0; i < num_vertex; i++)
-		vertex_normals[i] /= normal_count[i];
+		vertex_normals[i] /= vertex_normals[i].module();
 
 }
 

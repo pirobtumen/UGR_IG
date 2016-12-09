@@ -107,7 +107,7 @@ GLfloat ambient_light[4] = {1,1,1,1};
 
 float light0_ambient_strength = 0.4;
 float light0_diffuse_strength = 0.5;
-float light0_specular_strength = 0.1;
+float light0_specular_strength = 0.2;
 
 _vertex4<float> light0_ambient(0.01,0.2,0.7,1);
 _vertex4<float> light0_diffuse(0,0,1,1);
