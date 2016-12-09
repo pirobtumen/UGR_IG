@@ -14,6 +14,8 @@
 #include "object3d.hpp"
 #include "utilities.hpp"
 
+#include "lightvar.hpp"
+
 // -----------------------------------------------------------------------------
 
 /*
@@ -35,7 +37,9 @@ public:
 	typedef vector<face> vector_faces;
 
 protected:
-	vector_faces faces;
+	vector_faces 	faces;
+	vector_points face_normals; // Each normal is a point object (vector).
+	vector_points vertex_normals;
 
 	void draw_triangles(GLenum mode, int start, int interval) const;
 
@@ -52,6 +56,9 @@ public:
 
 	void set_num_faces(unsigned int num);
 	void clear();
+
+	void calc_face_normal();
+	void calc_vertex_normal();
 
 	// Consultores
 	// ---------------------------------------------------------------------------

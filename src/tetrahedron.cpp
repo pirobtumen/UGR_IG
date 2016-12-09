@@ -21,27 +21,29 @@ Tetrahedron::Tetrahedron(){
 	points.resize(4);
 	faces.resize(4);
 
-	point.x = -0.5;
+	point.z = -0.5;
 	point.y = 0;
-	point.z = base_height;
+	point.x = base_height;
 	points[0] = point;
 
-	point.x = 0.5;
+	point.z = 0.5;
 	point.y = 0.5;
-	point.z = base_height;
+	point.x = base_height;
 	points[1] = point;
 
-	point.x = 0.5;
+	point.z = 0.5;
 	point.y = -0.5;
-	point.z = base_height;
+	point.x = base_height;
 	points[2] = point;
 
-	point.x = 0;
+	point.z = 0;
 	point.y = 0;
-	point.z = top_height;
+	point.x = top_height;
 	points[3] = point;
 
 	generate_faces();
+	calc_face_normal();
+	calc_vertex_normal();
 }
 
 // -----------------------------------------------------------------------------

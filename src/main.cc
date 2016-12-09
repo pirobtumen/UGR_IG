@@ -48,6 +48,8 @@
 #include "piece.hpp"
 #include "piecedoor.hpp"
 
+#include "lightvar.hpp"
+
 // tamaño de los ejes
 const int AXIS_SIZE=5000;
 
@@ -98,8 +100,30 @@ DrawMode draw_mode = POINTS;
 DrawItem draw_item = TETRAHEDRON;
 SelectIem select_item = ONE;
 
+// Iluminación
+// -----------------------------------------------------------------------------
+
+//_vertex3<float> ambient_color_l0;
+//ambient_color_l0.r = 1;
+//ambient_color_l0.g = 1;
+//ambient_color_l0.b = 1;
+//float ambient_strength = 0.1f;
+
+GLfloat ambient_light[4] = {1,1,1,1};
+
+float light0_ambient_strength = 0.4;
+float light0_diffuse_strength = 0.5;
+float light0_specular_strength = 0.1;
+
+_vertex4<float> light0_ambient(0.01,0.2,0.7,1);
+_vertex4<float> light0_diffuse(0,0,1,1);
+_vertex4<float> light0_specular(1,1,1,1);
+
+// TODO: crear materiales
+GLfloat light0_pos[4] = {5,5,5,1}; // Coordenadas homogéneas
+
 // Funciones
-// ----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 void read_polygon_from_file(char * filename, Polyhedron & model){
 	_file_ply ply_reader;
@@ -126,6 +150,8 @@ void read_polygon_from_file(char * filename, Polyhedron & model){
 	for( int i = 0; i < num_faces; i+=3)
 		model.add_face(faces[i], faces[i+1], faces[i+2]);
 
+	model.calc_face_normal();
+	model.calc_vertex_normal();
 }
 
 // -----------------------------------------------------------------------------
@@ -227,8 +253,6 @@ void draw(){
 			break;
 	}
 
-
-
 }
 
 // -----------------------------------------------------------------------------
@@ -241,6 +265,38 @@ void read_models(){
 	read_polygon_from_file(filename1, file_model);
 	read_polygon_from_file(filename2, file_model2);
 	read_polygon_from_file(filename3, file_model3);
+}
+
+// -----------------------------------------------------------------------------
+
+void init_light(){
+	light0_diffuse *= light0_diffuse_strength;
+	light0_ambient *= light0_ambient_strength;
+	light0_specular *= light0_specular_strength;
+
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT,ambient_light);
+	glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER,GL_TRUE);
+
+	// Default material
+	glMaterialfv(GL_FRONT,GL_AMBIENT, (GLfloat *) &light0_ambient);
+	glMaterialfv(GL_FRONT,GL_DIFFUSE, (GLfloat *) &light0_diffuse);
+	glMaterialfv(GL_FRONT,GL_SPECULAR, (GLfloat *) &light0_specular);
+	glMaterialf(GL_FRONT,GL_SHININESS,20);
+
+	glLightfv(GL_LIGHT0,GL_POSITION,light0_pos);
+
+	glShadeModel(GL_FLAT);
+
+	//glEnable(GL_COLOR_MATERIAL); // TODO: Aplicar sólo a los ejes
+
+	/*
+		Si haces un glScale, independientemente de si utilizas marcos de pila
+								glPushMatrix y glPopMatrix
+		El escalado también influye en "normal matrix", por lo que hay que
+		establecer GL_NORMALIZE para que se vuelvan a normalizar las normales
+		y la iluminación se calcule bien.
+	*/
+	glEnable(GL_NORMALIZE);
 }
 
 // -----------------------------------------------------------------------------
@@ -260,9 +316,9 @@ void generate_models(){
 	// ---------------------------------------------------------------------------
 
 	points.clear();
-	points.push_back(RevolutionSurface::point(0,-0.5,0));
-	points.push_back(RevolutionSurface::point(0.5,-0.5,0));
 	points.push_back(RevolutionSurface::point(0.75,0.5,0));
+	points.push_back(RevolutionSurface::point(0.5,-0.5,0));
+	points.push_back(RevolutionSurface::point(0,-0.5,0));
 
 	glass.set_points(points);
 	glass.spin(num_surfaces);
@@ -282,8 +338,8 @@ void generate_models(){
 	// ---------------------------------------------------------------------------
 
 	points.clear();
-	points.push_back(RevolutionSurface::point(0,-0.5,0));
 	points.push_back(RevolutionSurface::point(0,0.5,0));
+	points.push_back(RevolutionSurface::point(0,-0.5,0));
 	points.push_back(RevolutionSurface::point(0.5,-0.5,0));
 
 	cone.set_points(points);
@@ -293,8 +349,8 @@ void generate_models(){
 	// ---------------------------------------------------------------------------
 
 	points.clear();
-	points.push_back(RevolutionSurface::point(0.5,-0.5,0));
 	points.push_back(RevolutionSurface::point(0.5,0.5,0));
+	points.push_back(RevolutionSurface::point(0.5,-0.5,0));
 
 	tube.set_points(points);
 	tube.spin(num_surfaces);
@@ -303,20 +359,20 @@ void generate_models(){
 	// ---------------------------------------------------------------------------
 
 	points.clear();
-	points.push_back(RevolutionSurface::point(0,-1.4,0)); // Base inferior
 	points.push_back(RevolutionSurface::point(0,1.4,0)); // Base superior
+	points.push_back(RevolutionSurface::point(0,-1.4,0)); // Base inferior
 
-	points.push_back(RevolutionSurface::point(1,-1.4,0)); // Base inferior
-	points.push_back(RevolutionSurface::point(1,-1.1,0));
-	points.push_back(RevolutionSurface::point(0.5,-0.7,0));
-	points.push_back(RevolutionSurface::point(0.4,-0.4,0));
-	points.push_back(RevolutionSurface::point(0.4,0.5,0));
-	points.push_back(RevolutionSurface::point(0.5,0.6,0));
-	points.push_back(RevolutionSurface::point(0.3,0.6,0));
-	points.push_back(RevolutionSurface::point(0.5,0.8,0));
-	points.push_back(RevolutionSurface::point(0.55,1,0));
-	points.push_back(RevolutionSurface::point(0.5,1.2,0));
 	points.push_back(RevolutionSurface::point(0.3,1.4,0)); // Base superior
+	points.push_back(RevolutionSurface::point(0.5,1.2,0));
+	points.push_back(RevolutionSurface::point(0.55,1,0));
+	points.push_back(RevolutionSurface::point(0.5,0.8,0));
+	points.push_back(RevolutionSurface::point(0.3,0.6,0));
+	points.push_back(RevolutionSurface::point(0.5,0.6,0));
+	points.push_back(RevolutionSurface::point(0.4,0.5,0));
+	points.push_back(RevolutionSurface::point(0.4,-0.4,0));
+	points.push_back(RevolutionSurface::point(0.5,-0.7,0));
+	points.push_back(RevolutionSurface::point(1,-1.1,0));
+	points.push_back(RevolutionSurface::point(1,-1.4,0)); // Base inferior
 
 	pawn.set_points(points);
 	pawn.spin(num_surfaces);
@@ -417,7 +473,16 @@ void draw_scene(void)
 	draw_axis();
 	//draw_objects();
 
+	// Iluminación
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+
+	// Modelos
+
 	draw();
+
+	// Deshabilitamos la luz
+	glDisable(GL_LIGHTING);
 
 	glutSwapBuffers();
 }
@@ -516,6 +581,16 @@ void normal_keys(unsigned char Tecla1,int x,int y)
 		case 'Y':
 			if(speed > MIN_SPEED)
 				speed -= SPEED_INC;
+			break;
+
+		case 'I':
+			glShadeModel(GL_FLAT);
+			light_mode = FLAT;
+			break;
+
+		case 'G':
+			glShadeModel(GL_SMOOTH);
+			light_mode = SMOOTH;
 			break;
 	}
 
@@ -686,6 +761,9 @@ int main(int argc, char **argv)
 
 	// Cambiamos la función IDLE para que actualice el modelo
 	glutIdleFunc( update_model );
+
+	// Inicializamos la luz
+	init_light();
 
 	// inicio del bucle de eventos
 	glutMainLoop();

@@ -6,7 +6,7 @@ Sphere::Sphere(){
   surface_points_number = 50;
 
   generate_profile();
-  spin(25);
+  spin(50);
 }
 
 // -----------------------------------------------------------------------------
@@ -22,13 +22,13 @@ Sphere::Sphere(unsigned int profile_points){
 void Sphere::generate_profile(){
 
   const double radius = 0.5;
-  const double angle = PI/surface_points_number;
+  const double angle = -1*PI/surface_points_number;
 
-  point p(0,-0.5,0);
+  point p(0,0.5,0);
   point p2;
 
-  points.push_back(p);
   points.push_back(point(0,0.5,0));
+  points.push_back(point(0,-0.5,0));
 
   for( int i = 0; i < surface_points_number; i++ ){
 

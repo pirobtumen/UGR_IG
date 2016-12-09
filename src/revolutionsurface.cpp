@@ -67,6 +67,8 @@ void RevolutionSurface::spin( unsigned int num_surfaces ){
   generate_points(num_surfaces);
   generate_surfaces(num_surfaces);
   generate_covers(num_surfaces);
+  calc_face_normal();
+  calc_vertex_normal();
 }
 
 // -----------------------------------------------------------------------------
@@ -129,6 +131,7 @@ void RevolutionSurface::generate_surfaces( unsigned int num_surfaces ){
     offset++;
 
   // Dibuja las caras que implican los puntos del perfil definido
+
   for( int i = offset; i < stop; i++ ){
 
     faces.push_back( RevolutionSurface::face(
@@ -137,6 +140,7 @@ void RevolutionSurface::generate_surfaces( unsigned int num_surfaces ){
       i+1
     ));
 
+
     faces.push_back( RevolutionSurface::face(
       i+1,
       surface_points_number+(num_surfaces-1)*(i-offset),
@@ -144,16 +148,17 @@ void RevolutionSurface::generate_surfaces( unsigned int num_surfaces ){
     ));
 
     // Opuestas
+
     faces.push_back( RevolutionSurface::face(
-      i,
+      surface_points_number+(num_surfaces-1)*(i-offset+1)+num_surfaces-2,
       surface_points_number+(num_surfaces-1)*(i-offset)+num_surfaces-2,
-      surface_points_number+(num_surfaces-1)*(i-offset+1)+num_surfaces-2
+      i
     ));
 
     faces.push_back( RevolutionSurface::face(
-      i,
+      i+1,
       surface_points_number+(num_surfaces-1)*(i-offset+1)+num_surfaces-2,
-      i+1
+      i
     ));
 
   }
@@ -172,9 +177,9 @@ void RevolutionSurface::generate_surfaces( unsigned int num_surfaces ){
           j+num_surfaces-1) );
 
         faces.push_back( RevolutionSurface::face(
-          j+1,
+          j+num_surfaces,
           j+num_surfaces-1,
-          j+num_surfaces) );
+          j+1) );
     }
 
   }
@@ -199,9 +204,9 @@ void RevolutionSurface::generate_covers( unsigned int num_surfaces ){
   if(offset > 0 ){
 
     faces.push_back( RevolutionSurface::face(
-      0,    // Primer punto en el eje
+      offset,    // Primer punto en el eje
       surface_points_number+num_surfaces-2,
-      offset) );
+      0) );
 
     faces.push_back( RevolutionSurface::face(
       0,    // Primer punto en el eje
@@ -209,12 +214,11 @@ void RevolutionSurface::generate_covers( unsigned int num_surfaces ){
       offset) );
 
     stop = surface_points_number + num_surfaces-2;
-
     for( int i = surface_points_number; i < stop; i++){
       faces.push_back( RevolutionSurface::face(
-        0,    // Primer punto en el eje
+        i+1,    // Primer punto en el eje
         i,
-        i+1) );
+        0) );
     }
 
   }
@@ -226,9 +230,9 @@ void RevolutionSurface::generate_covers( unsigned int num_surfaces ){
       surface_points_number-1) );
 
     faces.push_back( RevolutionSurface::face(
-      1,    // Primer punto en el eje
+      surface_points_number-1,    // Primer punto en el eje
       surface_points_number+(surface_points_number-offset-1)*(num_surfaces-1),
-      surface_points_number-1) );
+      1) );
 
     stop = surface_points_number+(surface_points_number-offset-1)*(num_surfaces-1) + num_surfaces-2;
 

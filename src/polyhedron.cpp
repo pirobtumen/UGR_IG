@@ -29,13 +29,93 @@ void Polyhedron::draw_triangles(GLenum mode,int start=0, int interval=1) const{
 
 	glBegin(GL_TRIANGLES);
 
-	for( int i = start; i < num_faces; i += interval ){
-		glVertex3fv( (GLfloat *) &points[faces[i].x] );
-		glVertex3fv( (GLfloat *) &points[faces[i].y] );
-		glVertex3fv( (GLfloat *) &points[faces[i].z] );
+	switch (light_mode) {
+		case FLAT:
+			for( int i = start; i < num_faces; i += interval ){
+				glNormal3fv( (GLfloat *) &face_normals[i] );
+				glVertex3fv( (GLfloat *) &points[faces[i].x] );
+				glVertex3fv( (GLfloat *) &points[faces[i].y] );
+				glVertex3fv( (GLfloat *) &points[faces[i].z] );
+			}
+			break;
+
+		case SMOOTH:
+			for( int i = start; i < num_faces; i += interval ){
+				glNormal3fv( (GLfloat *) &vertex_normals[faces[i].x] );
+				glVertex3fv( (GLfloat *) &points[faces[i].x] );
+				glNormal3fv( (GLfloat *) &vertex_normals[faces[i].y] );
+				glVertex3fv( (GLfloat *) &points[faces[i].y] );
+				glNormal3fv( (GLfloat *) &vertex_normals[faces[i].z] );
+				glVertex3fv( (GLfloat *) &points[faces[i].z] );
+			}
+			break;
+
+		default:
+			for( int i = start; i < num_faces; i += interval ){
+				glVertex3fv( (GLfloat *) &points[faces[i].x] );
+				glVertex3fv( (GLfloat *) &points[faces[i].y] );
+				glVertex3fv( (GLfloat *) &points[faces[i].z] );
+			}
+			break;
 	}
 
 	glEnd();
+}
+
+// -----------------------------------------------------------------------------
+
+void Polyhedron::calc_face_normal(){
+	point normal;
+	point a;
+	point b;
+	float module;
+
+	face_normals.clear();
+
+	for( const face & f : faces ){
+
+		a = points[f._0] - points[f._1];
+		b = points[f._2] - points[f._1];
+
+		//normal = a.cross_product(b);
+		normal = b.cross_product(a);
+		normal /= normal.module();
+
+		face_normals.push_back(normal);
+	}
+}
+
+// -----------------------------------------------------------------------------
+
+void Polyhedron::calc_vertex_normal(){
+	point zero(0,0,0);
+	vector<unsigned int> normal_count;
+	unsigned int num_vertex = points.size();
+	unsigned int num_faces = faces.size();
+
+	vertex_normals.clear();
+
+	vertex_normals.resize(num_vertex);
+	normal_count.resize(num_vertex);
+
+	for(unsigned int i = 0; i < num_vertex; i++){
+		vertex_normals[i] = zero;
+		normal_count[i] = 0;
+	}
+
+	for(unsigned int i = 0; i < num_faces; i++){
+		vertex_normals[faces[i]._0] += face_normals[i];
+		vertex_normals[faces[i]._1] += face_normals[i];
+		vertex_normals[faces[i]._2] += face_normals[i];
+
+		normal_count[faces[i]._0]++;
+		normal_count[faces[i]._1]++;
+		normal_count[faces[i]._2]++;
+	}
+
+	for(unsigned int i = 0; i < num_vertex; i++)
+		vertex_normals[i] /= normal_count[i];
+
 }
 
 // -----------------------------------------------------------------------------

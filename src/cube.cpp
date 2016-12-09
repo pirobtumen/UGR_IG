@@ -36,6 +36,8 @@ Cube::Cube(){
 	points[7] = p7;
 
 	generate_faces();
+	calc_face_normal();
+	calc_vertex_normal();
 }
 
 // -----------------------------------------------------------------------------

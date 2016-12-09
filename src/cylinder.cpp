@@ -10,5 +10,5 @@ Cylinder::Cylinder(){
   outline.push_back(RevolutionSurface::point(0.5,-0.5,0));
 
   set_points(outline);
-  spin(50);
+  spin(25);
 }
