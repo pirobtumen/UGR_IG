@@ -40,6 +40,7 @@ protected:
 	vector_faces 	faces;
 	vector_points face_normals; // Each normal is a point object (vector).
 	vector_points vertex_normals;
+	std::vector< std::pair<GLfloat,GLfloat> > texture_vertex;
 
 	void draw_triangles(GLenum mode, int start, int interval) const;
 

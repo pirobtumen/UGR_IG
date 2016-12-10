@@ -23,7 +23,7 @@ CXXFLAGS=  -g -DXWINDOWS -DSHM -I/usr/include -I. -I$(INC)
 # Se indica directorios donde encontrar las funciontecas con -L. Usando -l seguido del
 # nombre se indica la funcionteca que se desea enlazar.
 #
-LDFLAGS=  -lGLU -lGL -lglut
+LDFLAGS=  -lGLU -lGL -lglut -ljpeg
 
 # definicion del compilador
 #
@@ -34,7 +34,7 @@ CC = g++
 default : $(BIN)/$(TARGETS)
 
 # regla de ejecucion
-$(BIN)/$(TARGETS) : $(OBJ)/main.o $(OBJ)/revolutionsurface.o $(OBJ)/cube.o $(OBJ)/object3d.o $(OBJ)/polyhedron.o $(OBJ)/tetrahedron.o $(OBJ)/file_ply_stl.o $(OBJ)/utilities.o $(OBJ)/sphere.o $(OBJ)/reguladorwatt.o  $(OBJ)/base.o $(OBJ)/cylinder.o $(OBJ)/piece.o $(OBJ)/piecedoor.o $(OBJ)/arm.o $(OBJ)/arm2.o $(OBJ)/body.o $(OBJ)/rotatevar.o $(OBJ)/lightvar.o $(OBJ)/board.o
+$(BIN)/$(TARGETS) : $(OBJ)/main.o $(OBJ)/revolutionsurface.o $(OBJ)/cube.o $(OBJ)/object3d.o $(OBJ)/polyhedron.o $(OBJ)/tetrahedron.o $(OBJ)/file_ply_stl.o $(OBJ)/utilities.o $(OBJ)/sphere.o $(OBJ)/reguladorwatt.o  $(OBJ)/base.o $(OBJ)/cylinder.o $(OBJ)/piece.o $(OBJ)/piecedoor.o $(OBJ)/arm.o $(OBJ)/arm2.o $(OBJ)/body.o $(OBJ)/rotatevar.o $(OBJ)/lightvar.o $(OBJ)/board.o $(OBJ)/jpg_imagen.o $(OBJ)/jpg_memsrc.o $(OBJ)/jpg_readwrite.o
 	$(CC) -o $@ $^ $(CXXFLAGS) $(LDFLAGS)
 
 $(OBJ)/%.o : $(SRC)/%.cc

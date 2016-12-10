@@ -50,7 +50,7 @@ void Polyhedron::draw_triangles(GLenum mode,int start=0, int interval=1) const{
 			}
 			break;
 
-		default:
+		case NONE:
 			for( int i = start; i < num_faces; i += interval ){
 				glVertex3fv( (GLfloat *) &points[faces[i].x] );
 				glVertex3fv( (GLfloat *) &points[faces[i].y] );
@@ -207,7 +207,9 @@ void Polyhedron::draw_edges(double r, double g, double b) const{
 	 * Dibuja las líneas (aristas) del modelo.
 	 */
 	glColor3f(r,g,b);
+	glDisable(GL_LIGHTING);
 	draw_triangles(GL_LINE);
+	glEnable(GL_LIGHTING);
 }
 
 // -----------------------------------------------------------------------------

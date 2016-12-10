@@ -56,13 +56,14 @@ void Object3D::draw_points(double r, double g, double b) const{
 	 */
 
 	int num_points = get_num_points();
-
+  glDisable(GL_LIGHTING);
 	glBegin(GL_POINTS);
   glColor3f(r,g,b);
 	for( int i = 0; i < num_points; i++ )
 		glVertex3fv( (GLfloat *) &points[i] );
 
 	glEnd();
+  glEnable(GL_LIGHTING);
 }
 
 // -----------------------------------------------------------------------------

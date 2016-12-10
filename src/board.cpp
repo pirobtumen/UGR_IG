@@ -1,22 +1,60 @@
 #include "board.hpp"
 
 Board::Board(){
-  int num_squares = 5;
-  int stop = (num_squares+1)*num_squares - 1;
-  int max_index = (num_squares+1);
-  float x_jump = 1.0/num_squares;
-  float z_jump = 1.0/num_squares;
+  generate_board(6);
+}
 
-  face f;
+void Board::generate_board(int num_squares){
+  generate_vertex(num_squares);
+  generate_faces(num_squares);
+  calc_face_normal();
+  calc_vertex_normal();
+  calc_texture_vertex(num_squares);
+}
+
+void Board::calc_texture_vertex(int num_squares){
+  /*
+    También se puede usar la función paramétrica de la recta para obtener
+    los valroes de dichos ejes.
+  */
+
+  float jump = 1.0/num_squares; // Mismo para X y Z
+
+  for(float v = 0; v <= 1; v += jump) // Z
+    for(float u = 0; u <= 1; u += jump) // X
+      texture_vertex.push_back(std::make_pair(u,v));
+
+}
+
+void Board::draw_texture(){
+  glEnable(GL_TEXTURE_2D);
+  glBegin(GL_TRIANGLES);
+
+  for(int i = 0; i < faces.size(); i++){
+    glTexCoord2f(texture_vertex[faces[i]._0].first,texture_vertex[faces[i]._0].second);
+    glVertex3fv((GLfloat *) &points[faces[i]._0]);
+    glTexCoord2f(texture_vertex[faces[i]._1].first,texture_vertex[faces[i]._1].second);
+    glVertex3fv((GLfloat *) &points[faces[i]._1]);
+    glTexCoord2f(texture_vertex[faces[i]._2].first,texture_vertex[faces[i]._2].second);
+    glVertex3fv((GLfloat *) &points[faces[i]._2]);
+  }
+
+  glEnd();
+  glDisable(GL_TEXTURE_2D);
+}
+
+void Board::generate_vertex(int num_squares){
+  double x_jump = 1.0/num_squares;
+  double z_jump = 1.0/num_squares;
 
   point p;
-  point p00(-0.5,0,-0.5);
-  point pnn(0.5,0,0.5);
+  point p00(-0.5f,0,-0.5f);
+  point pnn(0.5f,0,0.5f);
 
   p.y = 0;
 
-  for(float z = p00.z; z <= pnn.z; z += z_jump){
-    for(float x = p00.x; x <= pnn.x; x += x_jump){
+  for(double z = p00.z; (pnn.z-z) >= -0.0001; z += z_jump){
+    for(double x = p00.x; (pnn.x-x) >= -0.0001; x += x_jump){
       p.x = x;
       p.z = z;
 
@@ -24,7 +62,12 @@ Board::Board(){
     }
   }
 
-  // Caras
+}
+
+void Board::generate_faces(int num_squares){
+  int max_index = (num_squares+1);
+  int stop = (num_squares+1)*num_squares - 1;
+  face f;
   int i = 0;
   while(i < stop){
     if( (i+1)%max_index == 0)
@@ -45,7 +88,4 @@ Board::Board(){
     i++;
 
   }
-
-  calc_face_normal();
-  calc_vertex_normal();
 }

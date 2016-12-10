@@ -51,6 +51,8 @@
 
 #include "lightvar.hpp"
 
+#include "jpg_imagen.hpp"
+
 // tamaño de los ejes
 const int AXIS_SIZE=5000;
 
@@ -102,8 +104,13 @@ Watt watt;
 //DrawItem draw_item = TETRAHEDRON;
 SelectIem selected_item = ONE;
 
-DrawMode draw_mode = POINTS;
+DrawMode draw_mode = SURFACES;
 DrawItem draw_item = BOARD;
+
+// Texturas
+// -----------------------------------------------------------------------------
+
+jpg::Imagen * board_texture = NULL;
 
 // Iluminación
 // -----------------------------------------------------------------------------
@@ -152,6 +159,21 @@ void read_polygon_from_file(char * filename, Polyhedron & model){
 	model.calc_face_normal();
 	model.calc_vertex_normal();
 }
+
+// -----------------------------------------------------------------------------
+
+void load_textures(){
+	board_texture = new jpg::Imagen("texturas/dia_8192.jpg");
+
+	glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE, GL_DECAL);
+
+	//glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+	glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,board_texture -> tamX(),board_texture -> tamY(),0,GL_RGB,GL_UNSIGNED_BYTE, (GLvoid *) (board_texture -> leerPixels()));}
 
 // -----------------------------------------------------------------------------
 
@@ -251,6 +273,7 @@ void draw(){
 			break;
 
 		case BOARD:
+			board.draw_texture();
 			draw_object(board);
 			break;
 	}
@@ -608,6 +631,7 @@ void normal_keys(unsigned char Tecla1,int x,int y)
 			glShadeModel(GL_SMOOTH);
 			light_mode = SMOOTH;
 			break;
+
 	}
 
 	glutPostRedisplay();
@@ -781,7 +805,14 @@ int main(int argc, char **argv)
 	// Inicializamos la luz
 	init_light();
 
+	// Cargamos las texturas
+	load_textures();
+
 	// inicio del bucle de eventos
 	glutMainLoop();
+
+	// Liberamos las texturas
+	delete board_texture;
+
 	return 0;
 }
