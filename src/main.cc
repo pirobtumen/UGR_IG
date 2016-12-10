@@ -39,6 +39,7 @@
 #include "tetrahedron.hpp"
 #include "revolutionsurface.hpp"
 #include "sphere.hpp"
+#include "board.hpp"
 
 #include "reguladorwatt.hpp"
 #include "body.hpp"
@@ -71,8 +72,8 @@ int UI_window_pos_x=50,UI_window_pos_y=50,UI_window_width=800,UI_window_height=8
 //
 // ----------------------------------------------------------------------------
 
-enum DrawItem { CUBE, TETRAHEDRON, FILE_MODEL, REVOLUTION, SPHERE, WATT };
-enum SelectIem { ONE, TWO, THREE, FOUR, FIVE, SIX };
+enum DrawItem { CUBE, TETRAHEDRON, FILE_MODEL, REVOLUTION, WATT, BOARD };
+enum SelectIem { ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN };
 
 const int SPIN_JUMP = 1;
 unsigned int num_surfaces = 50;
@@ -80,6 +81,7 @@ bool need_spin = false;
 
 Cube cube;
 Tetrahedron tetrahedron;
+Board board;
 
 Polyhedron file_model;
 Polyhedron file_model2;
@@ -96,9 +98,12 @@ Cylinder cylinder;
 
 Watt watt;
 
+//DrawMode draw_mode = POINTS;
+//DrawItem draw_item = TETRAHEDRON;
+SelectIem selected_item = ONE;
+
 DrawMode draw_mode = POINTS;
-DrawItem draw_item = TETRAHEDRON;
-SelectIem select_item = ONE;
+DrawItem draw_item = BOARD;
 
 // Iluminación
 // -----------------------------------------------------------------------------
@@ -200,7 +205,7 @@ void draw(){
 			break;
 		case FILE_MODEL:
 
-			switch (select_item) {
+			switch (selected_item) {
 				case ONE:
 					draw_object(file_model);
 					break;
@@ -215,7 +220,7 @@ void draw(){
 
 		case REVOLUTION:
 
-			switch (select_item) {
+			switch (selected_item) {
 				case ONE:
 					draw_object(cylinder);
 					break;
@@ -232,18 +237,21 @@ void draw(){
 					draw_object(tube);
 					break;
 				case SIX:
+					draw_object(sphere);
+					break;
+				case SEVEN:
 					draw_object(pawn);
 					break;
 			}
 
 			break;
 
-		case SPHERE:
-			draw_object(sphere);
-			break;
-
 		case WATT:
 			draw_object(watt);
+			break;
+
+		case BOARD:
+			draw_object(board);
 			break;
 	}
 
@@ -264,6 +272,9 @@ void read_models(){
 // -----------------------------------------------------------------------------
 
 void init_light(){
+	/*
+		Inicializamos los parámetros de iluminación
+	*/
 	light0_diffuse *= light0_diffuse_strength;
 	light0_ambient *= light0_ambient_strength;
 	light0_specular *= light0_specular_strength;
@@ -271,14 +282,19 @@ void init_light(){
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT,ambient_light);
 	glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER,GL_TRUE);
 
-	// Default material
+	// Material por defecto
 	glMaterialfv(GL_FRONT,GL_AMBIENT, (GLfloat *) &light0_ambient);
 	glMaterialfv(GL_FRONT,GL_DIFFUSE, (GLfloat *) &light0_diffuse);
 	glMaterialfv(GL_FRONT,GL_SPECULAR, (GLfloat *) &light0_specular);
 	glMaterialf(GL_FRONT,GL_SHININESS,20);
 
+	// TODO: Mover poisicón
+	// TODO: Añadir Luz
+	// TODO: Cambiar parámetros
+	// Luz 0 - Posicional
 	glLightfv(GL_LIGHT0,GL_POSITION,light0_pos);
 
+	// Tipo de iluminación pr defecto
 	glShadeModel(GL_FLAT);
 
 	/*
@@ -539,23 +555,26 @@ void normal_keys(unsigned char Tecla1,int x,int y)
 			break;
 
 		case '1':
-			select_item = ONE;
+			selected_item = ONE;
 			break;
 
 		case '2':
-			select_item = TWO;
+			selected_item = TWO;
 			break;
 		case '3':
-			select_item = THREE;
+			selected_item = THREE;
 			break;
 		case '4':
-			select_item = FOUR;
+			selected_item = FOUR;
 			break;
 		case '5':
-			select_item = FIVE;
+			selected_item = FIVE;
 			break;
 		case '6':
-			select_item = SIX;
+			selected_item = SIX;
+			break;
+		case '7':
+			selected_item = SEVEN;
 			break;
 
 		case '+':
@@ -570,12 +589,12 @@ void normal_keys(unsigned char Tecla1,int x,int y)
 			}
 			break;
 
-		case 'U':
+		case 'L':
 			if(speed < MAX_SPEED)
 				speed += SPEED_INC;
 			break;
 
-		case 'Y':
+		case 'K':
 			if(speed > MIN_SPEED)
 				speed -= SPEED_INC;
 			break;
@@ -627,10 +646,10 @@ void special_keys(int Tecla1,int x,int y)
 			draw_item = REVOLUTION;
 			break;
 		case GLUT_KEY_F5:
-			draw_item = SPHERE;
+			draw_item = WATT;
 			break;
 		case GLUT_KEY_F6:
-			draw_item = WATT;
+			draw_item = BOARD;
 			break;
 		}
 

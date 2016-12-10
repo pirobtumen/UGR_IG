@@ -1,4 +1,6 @@
 obj/*.o
-bin/*
-modelos/*
-modelos2/*
+bin
+modelos
+modelos2
+texturas
+lata
