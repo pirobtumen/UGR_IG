@@ -127,12 +127,12 @@ _vertex4<float> material0_ambient(0.01,0.2,0.7,1);
 _vertex4<float> material0_diffuse(0,0,1,1);
 _vertex4<float> material0_specular(1,1,1,1);
 
-float material1_ambient_strength = 0.4;
-float material1_diffuse_strength = 0.5;
-float material1_specular_strength = 0.2;
+float material1_ambient_strength = 0.2;
+float material1_diffuse_strength = 0.6;
+float material1_specular_strength = 0.3;
 
-_vertex4<float> material1_ambient(0.01,0.2,0.7,1);
-_vertex4<float> material1_diffuse(0,0,1,1);
+_vertex4<float> material1_ambient(0,1,0,1);
+_vertex4<float> material1_diffuse(0,1,0,1);
 _vertex4<float> material1_specular(1,1,1,1);
 
 _vertex4<float> light1_ambient(0.2,0.2,0.2,1);
@@ -304,6 +304,26 @@ void draw(){
 
 // -----------------------------------------------------------------------------
 
+void set_material0(){
+	// Material por defecto
+	glMaterialfv(GL_FRONT,GL_AMBIENT, (GLfloat *) &material0_ambient);
+	glMaterialfv(GL_FRONT,GL_DIFFUSE, (GLfloat *) &material0_diffuse);
+	glMaterialfv(GL_FRONT,GL_SPECULAR, (GLfloat *) &material0_specular);
+	glMaterialf(GL_FRONT,GL_SHININESS,50);
+}
+
+// -----------------------------------------------------------------------------
+
+void set_material1(){
+	// Material por defecto
+	glMaterialfv(GL_FRONT,GL_AMBIENT, (GLfloat *) &material1_ambient);
+	glMaterialfv(GL_FRONT,GL_DIFFUSE, (GLfloat *) &material1_diffuse);
+	glMaterialfv(GL_FRONT,GL_SPECULAR, (GLfloat *) &material1_specular);
+	glMaterialf(GL_FRONT,GL_SHININESS,5);
+}
+
+// -----------------------------------------------------------------------------
+
 void read_models(){
 	char filename1[] = "./modelos/ant.ply";
 	char filename2[] = "./modelos/big_porsche.ply";
@@ -324,14 +344,15 @@ void init_light(){
 	material0_ambient *= material0_ambient_strength;
 	material0_specular *= material0_specular_strength;
 
+	material1_diffuse *= material1_diffuse_strength;
+	material1_ambient *= material1_ambient_strength;
+	material1_specular *= material1_specular_strength;
+
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT,ambient_light);
 	glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER,GL_TRUE);
 
-	// Material por defecto
-	glMaterialfv(GL_FRONT,GL_AMBIENT, (GLfloat *) &material0_ambient);
-	glMaterialfv(GL_FRONT,GL_DIFFUSE, (GLfloat *) &material0_diffuse);
-	glMaterialfv(GL_FRONT,GL_SPECULAR, (GLfloat *) &material0_specular);
-	glMaterialf(GL_FRONT,GL_SHININESS,20);
+	// Default mateiral
+	set_material0();
 
 	// Luz 0 - Posicional (w=0)
 	glLightfv(GL_LIGHT0,GL_POSITION,(GLfloat *) &light0_pos);
@@ -685,6 +706,14 @@ void normal_keys(unsigned char Tecla1,int x,int y)
 			light1_diffuse[1] += 0.1;
 			light1_diffuse[2] += 0.1;
 			glLightfv(GL_LIGHT1,GL_DIFFUSE,(GLfloat *) &light1_diffuse);
+			break;
+
+		case 'Z':
+			set_material0();
+			break;
+
+		case 'X':
+			set_material1();
 			break;
 
 	}
