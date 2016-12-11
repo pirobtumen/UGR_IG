@@ -1,8 +1,12 @@
 #include "board.hpp"
 
+// -----------------------------------------------------------------------------
+
 Board::Board(){
   generate_board(10);
 }
+
+// -----------------------------------------------------------------------------
 
 void Board::generate_board(int num_squares){
   points.clear();
@@ -18,6 +22,8 @@ void Board::generate_board(int num_squares){
   calc_texture_vertex(num_squares);
 }
 
+// -----------------------------------------------------------------------------
+
 void Board::calc_texture_vertex(int num_squares){
   double jump = 1.0/num_squares; // Mismo para X y Z
 
@@ -26,6 +32,8 @@ void Board::calc_texture_vertex(int num_squares){
       texture_vertex.push_back(std::make_pair(u,v));
 
 }
+
+// -----------------------------------------------------------------------------
 
 void Board::draw_texture(){
   glEnable(GL_TEXTURE_2D);
@@ -43,6 +51,8 @@ void Board::draw_texture(){
   glEnd();
   glDisable(GL_TEXTURE_2D);
 }
+
+// -----------------------------------------------------------------------------
 
 void Board::generate_vertex(int num_squares){
   double x_jump = 1.0/num_squares;
@@ -69,6 +79,8 @@ void Board::generate_vertex(int num_squares){
 
 }
 
+// -----------------------------------------------------------------------------
+
 void Board::generate_faces(int num_squares){
   int max_index = (num_squares+1);
   int stop = (num_squares+1)*num_squares - 1;
@@ -94,3 +106,5 @@ void Board::generate_faces(int num_squares){
 
   }
 }
+
+// -----------------------------------------------------------------------------
