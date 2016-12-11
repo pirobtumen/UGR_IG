@@ -1,10 +1,16 @@
 #include "board.hpp"
 
 Board::Board(){
-  generate_board(6);
+  generate_board(10);
 }
 
 void Board::generate_board(int num_squares){
+  points.clear();
+  faces.clear();
+  face_normals.clear();
+  vertex_normals.clear();
+  texture_vertex.clear();
+
   generate_vertex(num_squares);
   generate_faces(num_squares);
   calc_face_normal();
@@ -13,15 +19,10 @@ void Board::generate_board(int num_squares){
 }
 
 void Board::calc_texture_vertex(int num_squares){
-  /*
-    También se puede usar la función paramétrica de la recta para obtener
-    los valroes de dichos ejes.
-  */
+  double jump = 1.0/num_squares; // Mismo para X y Z
 
-  float jump = 1.0/num_squares; // Mismo para X y Z
-
-  for(float v = 0; v <= 1; v += jump) // Z
-    for(float u = 0; u <= 1; u += jump) // X
+  for(double v = 0; (1-v) >= -0.001f; v += jump) // Z
+    for(double u = 0; (1-u) >= -0.001f; u += jump) // X
       texture_vertex.push_back(std::make_pair(u,v));
 
 }
@@ -51,15 +52,19 @@ void Board::generate_vertex(int num_squares){
   point p00(-0.5f,0,-0.5f);
   point pnn(0.5f,0,0.5f);
 
+  p.x = -0.5f;
   p.y = 0;
+  p.z = -0.5f;
 
-  for(double z = p00.z; (pnn.z-z) >= -0.0001; z += z_jump){
-    for(double x = p00.x; (pnn.x-x) >= -0.0001; x += x_jump){
-      p.x = x;
-      p.z = z;
 
+  for(unsigned int z = 0; z <= num_squares; z++){
+    for(unsigned int x = 0; x <= num_squares; x++){
       points.push_back(p);
+      p.x += x_jump;
     }
+
+    p.x = -0.5f;
+    p.z += z_jump;
   }
 
 }

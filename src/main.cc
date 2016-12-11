@@ -52,6 +52,7 @@
 #include "lightvar.hpp"
 
 #include "jpg_imagen.hpp"
+#include "cube2.hpp"
 
 // tamaño de los ejes
 const int AXIS_SIZE=5000;
@@ -82,6 +83,7 @@ unsigned int num_surfaces = 50;
 bool need_spin = false;
 
 Cube cube;
+Cube2 cube2;
 Tetrahedron tetrahedron;
 Board board;
 
@@ -117,16 +119,29 @@ jpg::Imagen * board_texture = NULL;
 
 GLfloat ambient_light[4] = {1,1,1,1};
 
-float light0_ambient_strength = 0.4;
-float light0_diffuse_strength = 0.5;
-float light0_specular_strength = 0.2;
+float material0_ambient_strength = 0.4;
+float material0_diffuse_strength = 0.5;
+float material0_specular_strength = 0.2;
 
-_vertex4<float> light0_ambient(0.01,0.2,0.7,1);
-_vertex4<float> light0_diffuse(0,0,1,1);
-_vertex4<float> light0_specular(1,1,1,1);
+_vertex4<float> material0_ambient(0.01,0.2,0.7,1);
+_vertex4<float> material0_diffuse(0,0,1,1);
+_vertex4<float> material0_specular(1,1,1,1);
+
+float material1_ambient_strength = 0.4;
+float material1_diffuse_strength = 0.5;
+float material1_specular_strength = 0.2;
+
+_vertex4<float> material1_ambient(0.01,0.2,0.7,1);
+_vertex4<float> material1_diffuse(0,0,1,1);
+_vertex4<float> material1_specular(1,1,1,1);
+
+_vertex4<float> light1_ambient(0.2,0.2,0.2,1);
+_vertex4<float> light1_diffuse(0.6,0.6,0.6,1);
+_vertex4<float> light1_specular(0.15,0.15,0.15,1);
 
 // TODO: crear materiales
-GLfloat light0_pos[4] = {5,5,5,1}; // Coordenadas homogéneas
+GLfloat light0_pos[4] = {0,5,0,1}; // Coordenadas homogéneas
+GLfloat light1_pos[4] = {0,0,5,0}; // Coordenadas homogéneas
 
 // Funciones
 // -----------------------------------------------------------------------------
@@ -220,7 +235,14 @@ void draw(){
 
 	switch (draw_item) {
 		case CUBE:
-			draw_object(cube);
+			glPushMatrix();
+				glTranslatef(0.8,0,0);
+				draw_object(cube);
+			glPopMatrix();
+			glPushMatrix();
+				glTranslatef(-0.8,0,0);
+				draw_object(cube2);
+			glPopMatrix();
 			break;
 		case TETRAHEDRON:
 			draw_object(tetrahedron);
@@ -298,24 +320,27 @@ void init_light(){
 	/*
 		Inicializamos los parámetros de iluminación
 	*/
-	light0_diffuse *= light0_diffuse_strength;
-	light0_ambient *= light0_ambient_strength;
-	light0_specular *= light0_specular_strength;
+	material0_diffuse *= material0_diffuse_strength;
+	material0_ambient *= material0_ambient_strength;
+	material0_specular *= material0_specular_strength;
 
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT,ambient_light);
 	glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER,GL_TRUE);
 
 	// Material por defecto
-	glMaterialfv(GL_FRONT,GL_AMBIENT, (GLfloat *) &light0_ambient);
-	glMaterialfv(GL_FRONT,GL_DIFFUSE, (GLfloat *) &light0_diffuse);
-	glMaterialfv(GL_FRONT,GL_SPECULAR, (GLfloat *) &light0_specular);
+	glMaterialfv(GL_FRONT,GL_AMBIENT, (GLfloat *) &material0_ambient);
+	glMaterialfv(GL_FRONT,GL_DIFFUSE, (GLfloat *) &material0_diffuse);
+	glMaterialfv(GL_FRONT,GL_SPECULAR, (GLfloat *) &material0_specular);
 	glMaterialf(GL_FRONT,GL_SHININESS,20);
 
-	// TODO: Mover poisicón
-	// TODO: Añadir Luz
-	// TODO: Cambiar parámetros
-	// Luz 0 - Posicional
-	glLightfv(GL_LIGHT0,GL_POSITION,light0_pos);
+	// Luz 0 - Posicional (w=0)
+	glLightfv(GL_LIGHT0,GL_POSITION,(GLfloat *) &light0_pos);
+
+	// Luz 1 - Direccional (w=0)
+	glLightfv(GL_LIGHT1,GL_POSITION,(GLfloat *) &light1_pos);
+	glLightfv(GL_LIGHT1,GL_AMBIENT,(GLfloat *) &light1_ambient);
+	glLightfv(GL_LIGHT1,GL_DIFFUSE,(GLfloat *) &light1_diffuse);
+	glLightfv(GL_LIGHT1,GL_SPECULAR,(GLfloat *) &light1_specular);
 
 	// Tipo de iluminación pr defecto
 	glShadeModel(GL_FLAT);
@@ -324,6 +349,8 @@ void init_light(){
 		Si quieremos que se utilice el color dado a los triángulos.
 	*/
 	//glEnable(GL_COLOR_MATERIAL);
+	glEnable(GL_LIGHT0);
+	glEnable(GL_LIGHT1);
 
 	/*
 		Si haces un glScale, independientemente de si utilizas marcos de pila
@@ -511,7 +538,9 @@ void draw_scene(void)
 
 	// Iluminación
 	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
+
+	// LIGHT0 - Position fixed
+	glLightfv(GL_LIGHT0,GL_POSITION,(GLfloat *) &light0_pos);
 
 	// Modelos
 
@@ -630,6 +659,32 @@ void normal_keys(unsigned char Tecla1,int x,int y)
 		case 'G':
 			glShadeModel(GL_SMOOTH);
 			light_mode = SMOOTH;
+			break;
+
+		case 'E':
+			light0_pos[0] += 0.5f;
+			// Only if light is relative to the camera
+			//glLightfv(GL_LIGHT0,GL_POSITION,(GLfloat *) &light0_pos);
+			break;
+
+		case 'D':
+			light0_pos[0] -= 0.5f;
+			// Only if light is relative to the camera
+			//glLightfv(GL_LIGHT0,GL_POSITION,(GLfloat *) &light0_pos);
+			break;
+
+		case 'R':
+			light1_diffuse[0] -= 0.1;
+			light1_diffuse[1] -= 0.1;
+			light1_diffuse[2] -= 0.1;
+			glLightfv(GL_LIGHT1,GL_DIFFUSE,(GLfloat *) &light1_diffuse);
+			break;
+
+		case 'F':
+			light1_diffuse[0] += 0.1;
+			light1_diffuse[1] += 0.1;
+			light1_diffuse[2] += 0.1;
+			glLightfv(GL_LIGHT1,GL_DIFFUSE,(GLfloat *) &light1_diffuse);
 			break;
 
 	}
