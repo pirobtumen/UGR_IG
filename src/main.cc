@@ -117,31 +117,38 @@ jpg::Imagen * board_texture = NULL;
 // Iluminación
 // -----------------------------------------------------------------------------
 
+int light0_angle = 0;
+int light1_angle = 1;
+
 GLfloat ambient_light[4] = {1,1,1,1};
 
 float material0_ambient_strength = 0.4;
 float material0_diffuse_strength = 0.5;
 float material0_specular_strength = 0.2;
 
-_vertex4<float> material0_ambient(0.01,0.2,0.7,1);
-_vertex4<float> material0_diffuse(0,0,1,1);
-_vertex4<float> material0_specular(1,1,1,1);
+_vertex4<float> material0_ambient(0.1,0.1,0.1,1);
+_vertex4<float> material0_diffuse(0.8,0,0,1);
+_vertex4<float> material0_specular(0.5,0.5,0.5,0);
 
 float material1_ambient_strength = 0.2;
 float material1_diffuse_strength = 0.6;
 float material1_specular_strength = 0.3;
 
-_vertex4<float> material1_ambient(0,1,0,1);
-_vertex4<float> material1_diffuse(0,1,0,1);
-_vertex4<float> material1_specular(1,1,1,1);
+_vertex4<float> material1_ambient(0,0,0.4,1);
+_vertex4<float> material1_diffuse(0,0,1,1);
+_vertex4<float> material1_specular(0.6,0.6,0.6,1);
+
+_vertex4<float> light0_ambient(0.2,0.2,0.2,1);
+_vertex4<float> light0_diffuse(0.8,0.8,0.8,1);
+_vertex4<float> light0_specular(0.2,0.2,0.2,1);
 
 _vertex4<float> light1_ambient(0.2,0.2,0.2,1);
 _vertex4<float> light1_diffuse(0.6,0.6,0.6,1);
 _vertex4<float> light1_specular(0.15,0.15,0.15,1);
 
 // TODO: crear materiales
-GLfloat light0_pos[4] = {0,5,0,1}; // Coordenadas homogéneas
-GLfloat light1_pos[4] = {0,0,5,0}; // Coordenadas homogéneas
+GLfloat light0_pos[4] = {0,10,0,1}; // Coordenadas homogéneas
+GLfloat light1_pos[4] = {0,0,10,1}; // Coordenadas homogéneas
 
 // Funciones
 // -----------------------------------------------------------------------------
@@ -336,6 +343,39 @@ void read_models(){
 
 // -----------------------------------------------------------------------------
 
+void disable_lighting(){
+	light_mode = NONE;
+	glDisable(GL_LIGHTING);
+	glEnable(GL_COLOR_MATERIAL);
+}
+
+// -----------------------------------------------------------------------------
+
+void enable_lighting(){
+	glDisable(GL_COLOR_MATERIAL);
+	glEnable(GL_LIGHTING);
+}
+
+// -----------------------------------------------------------------------------
+
+void draw_light0(){
+	glPushMatrix();
+	glRotatef(light0_angle,0,0,1);
+	glLightfv(GL_LIGHT0,GL_POSITION,(GLfloat *) &light0_pos);
+	glPopMatrix();
+}
+
+// -----------------------------------------------------------------------------
+
+void draw_light1(){
+	glPushMatrix();
+	glRotatef(light1_angle,0,1,0);
+	glLightfv(GL_LIGHT1,GL_POSITION,(GLfloat *) &light1_pos);
+	glPopMatrix();
+}
+
+// -----------------------------------------------------------------------------
+
 void init_light(){
 	/*
 		Inicializamos los parámetros de iluminación
@@ -355,13 +395,16 @@ void init_light(){
 	set_material0();
 
 	// Luz 0 - Posicional (w=0)
-	glLightfv(GL_LIGHT0,GL_POSITION,(GLfloat *) &light0_pos);
+	glLightfv(GL_LIGHT1,GL_AMBIENT,(GLfloat *) &light0_ambient);
+	glLightfv(GL_LIGHT1,GL_DIFFUSE,(GLfloat *) &light0_diffuse);
+	glLightfv(GL_LIGHT1,GL_SPECULAR,(GLfloat *) &light0_specular);
+	draw_light0();
 
 	// Luz 1 - Direccional (w=0)
 	glLightfv(GL_LIGHT1,GL_POSITION,(GLfloat *) &light1_pos);
 	glLightfv(GL_LIGHT1,GL_AMBIENT,(GLfloat *) &light1_ambient);
 	glLightfv(GL_LIGHT1,GL_DIFFUSE,(GLfloat *) &light1_diffuse);
-	glLightfv(GL_LIGHT1,GL_SPECULAR,(GLfloat *) &light1_specular);
+	draw_light1();
 
 	// Tipo de iluminación pr defecto
 	glShadeModel(GL_FLAT);
@@ -552,23 +595,25 @@ void draw_objects()
 
 void draw_scene(void)
 {
+	// Deshabilitamos la luz
+	glDisable(GL_LIGHTING);
+
 	clear_window();
 	change_observer();
 	draw_axis();
 	//draw_objects();
 
 	// Iluminación
-	glEnable(GL_LIGHTING);
+	if(light_mode != NONE){
+		glEnable(GL_LIGHTING);
 
-	// LIGHT0 - Position fixed
-	glLightfv(GL_LIGHT0,GL_POSITION,(GLfloat *) &light0_pos);
+		// Lighting - Position fixed
+		draw_light0();
+		draw_light1();
+	}
 
 	// Modelos
-
 	draw();
-
-	// Deshabilitamos la luz
-	glDisable(GL_LIGHTING);
 
 	glutSwapBuffers();
 }
@@ -608,22 +653,27 @@ void normal_keys(unsigned char Tecla1,int x,int y)
 			break;
 
 		case 'P':
+			disable_lighting();
 			draw_mode = POINTS;
 			break;
 
 		case 'A':
+			disable_lighting();
 			draw_mode = EDGES;
 			break;
 
 		case 'S':
+			disable_lighting();
 			draw_mode = SURFACES;
 			break;
 
 		case 'C':
+			disable_lighting();
 			draw_mode = CHESS;
 			break;
 
 		case 'T':
+			disable_lighting();
 			draw_mode = ALL;
 			break;
 
@@ -673,39 +723,35 @@ void normal_keys(unsigned char Tecla1,int x,int y)
 			break;
 
 		case 'I':
+			enable_lighting();
 			glShadeModel(GL_FLAT);
 			light_mode = FLAT;
 			break;
 
 		case 'G':
+			enable_lighting();
 			glShadeModel(GL_SMOOTH);
 			light_mode = SMOOTH;
 			break;
 
 		case 'E':
-			light0_pos[0] += 0.5f;
-			// Only if light is relative to the camera
-			//glLightfv(GL_LIGHT0,GL_POSITION,(GLfloat *) &light0_pos);
+			light0_angle = (light0_angle + 5) % 360;
+			draw_light0();
 			break;
 
 		case 'D':
-			light0_pos[0] -= 0.5f;
-			// Only if light is relative to the camera
-			//glLightfv(GL_LIGHT0,GL_POSITION,(GLfloat *) &light0_pos);
+			light0_angle = (light0_angle - 5) % 360;
+			draw_light0();
 			break;
 
 		case 'R':
-			light1_diffuse[0] -= 0.1;
-			light1_diffuse[1] -= 0.1;
-			light1_diffuse[2] -= 0.1;
-			glLightfv(GL_LIGHT1,GL_DIFFUSE,(GLfloat *) &light1_diffuse);
+			light1_angle = (light1_angle + 5) % 360;
+			draw_light1();
 			break;
 
 		case 'F':
-			light1_diffuse[0] += 0.1;
-			light1_diffuse[1] += 0.1;
-			light1_diffuse[2] += 0.1;
-			glLightfv(GL_LIGHT1,GL_DIFFUSE,(GLfloat *) &light1_diffuse);
+			light1_angle = (light1_angle - 5) % 360;
+			draw_light1();
 			break;
 
 		case 'Z':

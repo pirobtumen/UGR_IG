@@ -252,7 +252,7 @@ void Polyhedron::draw_all() const{
 	 */
 
 	 draw_points();
-	 draw_edges(0.03,0.54,0.73);
+	 draw_edges(1,0,0);
 	 draw_surfaces();
 }
 
