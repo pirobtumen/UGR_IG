@@ -83,7 +83,7 @@ unsigned int num_surfaces = 50;
 bool need_spin = false;
 
 Cube cube;
-Cube2 cube2;
+Cube cube2;
 Tetrahedron tetrahedron;
 Board board;
 
@@ -126,29 +126,29 @@ float material0_ambient_strength = 0.4;
 float material0_diffuse_strength = 0.5;
 float material0_specular_strength = 0.2;
 
-_vertex4<float> material0_ambient(0.1,0.1,0.1,1);
-_vertex4<float> material0_diffuse(0.8,0,0,1);
+_vertex4<float> material0_ambient(0.8,0,0,1);
+_vertex4<float> material0_diffuse(0.7,0,0,1);
 _vertex4<float> material0_specular(0.5,0.5,0.5,0);
 
 float material1_ambient_strength = 0.2;
 float material1_diffuse_strength = 0.6;
 float material1_specular_strength = 0.3;
 
-_vertex4<float> material1_ambient(0,0,0.4,1);
-_vertex4<float> material1_diffuse(0,0,1,1);
+_vertex4<float> material1_ambient(0,0,0.8,1);
+_vertex4<float> material1_diffuse(0,0,0.8,1);
 _vertex4<float> material1_specular(0.6,0.6,0.6,1);
 
 _vertex4<float> light0_ambient(0.2,0.2,0.2,1);
 _vertex4<float> light0_diffuse(0.8,0.8,0.8,1);
 _vertex4<float> light0_specular(0.2,0.2,0.2,1);
 
-_vertex4<float> light1_ambient(0.2,0.2,0.2,1);
+_vertex4<float> light1_ambient(0.3,0.3,0.3,1);
 _vertex4<float> light1_diffuse(0.6,0.6,0.6,1);
 _vertex4<float> light1_specular(0.15,0.15,0.15,1);
 
 // TODO: crear materiales
 GLfloat light0_pos[4] = {0,10,0,1}; // Coordenadas homogéneas
-GLfloat light1_pos[4] = {0,0,10,1}; // Coordenadas homogéneas
+GLfloat light1_pos[4] = {0,0,10,0}; // Coordenadas homogéneas
 
 // Funciones
 // -----------------------------------------------------------------------------
@@ -194,7 +194,6 @@ void load_textures(){
 
 	glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE, GL_DECAL);
 
-	//glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
 	glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,board_texture -> tamX(),board_texture -> tamY(),0,GL_RGB,GL_UNSIGNED_BYTE, (GLvoid *) (board_texture -> leerPixels()));}
 
 // -----------------------------------------------------------------------------

@@ -3,12 +3,18 @@
 // -----------------------------------------------------------------------------
 
 Board::Board(){
+  /*
+    Generate the default size board.
+  */
   generate_board(10);
 }
 
 // -----------------------------------------------------------------------------
 
 void Board::generate_board(int num_squares){
+  /*
+    Generate a board of N*N squares.
+  */
   points.clear();
   faces.clear();
   face_normals.clear();
@@ -25,27 +31,68 @@ void Board::generate_board(int num_squares){
 // -----------------------------------------------------------------------------
 
 void Board::calc_texture_vertex(int num_squares){
-  double jump = 1.0/num_squares; // Mismo para X y Z
+  // Select a region of the board
+  const int BOARD_START_X = 1;
+  const int BOARD_START_Y = 1;
+  const int BOARD_END_X = num_squares-1;
+  const int BOARD_END_Y = num_squares-1;
 
-  for(double v = 0; (1-v) >= -0.001f; v += jump) // Z
-    for(double u = 0; (1-u) >= -0.001f; u += jump) // X
-      texture_vertex.push_back(std::make_pair(u,v));
+  // Select a region of the texture
+  const double TEXTURE_START_U = 0.25;
+  const double TEXTURE_START_V = 0.25;
+  const double TEXTURE_END_U = 0.75;
+  const double TEXTURE_END_V = 0.75;
+
+  // Jump between two texture points
+  const double JUMP_V = (double)(TEXTURE_END_V - TEXTURE_START_V)/num_squares;
+  const double JUMP_U = (double)(TEXTURE_END_U - TEXTURE_START_U)/num_squares;
+
+  const double max_u = BOARD_END_X-BOARD_START_X;
+  const double max_v = BOARD_END_Y-BOARD_START_Y+(1-TEXTURE_END_V);
+  double u;
+  double v;
+
+  // Generate texture points
+  for(int y = 0; y <= num_squares; y++){
+    for(int x = 0; x <= num_squares; x++){
+      if(x < BOARD_START_X || x > BOARD_END_X || y < BOARD_START_Y || y > BOARD_END_Y){
+        texture_vertex.push_back(std::make_pair(-1,-1));
+      }
+      else{
+        u = x-BOARD_START_X;
+        v = y-BOARD_START_Y;
+
+        texture_vertex.push_back(std::make_pair(
+          ((u/max_u)+TEXTURE_START_U)/(1+1-TEXTURE_END_U+TEXTURE_START_U),
+          ((v/max_v)+TEXTURE_START_V)/(1+1-TEXTURE_END_V+TEXTURE_START_V)
+        ));
+      }
+    }
+  }
 
 }
 
 // -----------------------------------------------------------------------------
 
 void Board::draw_texture(){
+  /*
+    Draw the texture.
+  */
   glEnable(GL_TEXTURE_2D);
   glBegin(GL_TRIANGLES);
 
   for(int i = 0; i < faces.size(); i++){
-    glTexCoord2f(texture_vertex[faces[i]._0].first,texture_vertex[faces[i]._0].second);
-    glVertex3fv((GLfloat *) &points[faces[i]._0]);
-    glTexCoord2f(texture_vertex[faces[i]._1].first,texture_vertex[faces[i]._1].second);
-    glVertex3fv((GLfloat *) &points[faces[i]._1]);
-    glTexCoord2f(texture_vertex[faces[i]._2].first,texture_vertex[faces[i]._2].second);
-    glVertex3fv((GLfloat *) &points[faces[i]._2]);
+    if( texture_vertex[faces[i]._0].first != -1 &&
+        texture_vertex[faces[i]._1].first != -1 &&
+        texture_vertex[faces[i]._2].first != -1    ){
+      glTexCoord2f(texture_vertex[faces[i]._0].first,texture_vertex[faces[i]._0].second);
+      glVertex3fv((GLfloat *) &points[faces[i]._0]);
+      glTexCoord2f(texture_vertex[faces[i]._1].first,texture_vertex[faces[i]._1].second);
+      glVertex3fv((GLfloat *) &points[faces[i]._1]);
+      glTexCoord2f(texture_vertex[faces[i]._2].first,texture_vertex[faces[i]._2].second);
+      glVertex3fv((GLfloat *) &points[faces[i]._2]);
+    }
+
   }
 
   glEnd();
