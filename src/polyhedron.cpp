@@ -15,6 +15,36 @@ Polyhedron::Polyhedron(){
 
 // -----------------------------------------------------------------------------
 
+void Polyhedron::load_ply(char * filename){
+	_file_ply ply_reader;
+	vector<float> points2;
+	vector<int> faces2;
+
+	unsigned int num_vertex;
+	unsigned int num_faces;
+
+	ply_reader.open(filename);
+	ply_reader.read(points2, faces2);
+	ply_reader.close();
+
+	num_vertex = points2.size();
+	num_faces  = faces2.size();
+
+	points.clear();
+	faces.clear();
+
+	for( int i = 0; i < num_vertex; i+=3)
+		add_point(points2[i], points2[i+1], points2[i+2]);
+
+	for( int i = 0; i < num_faces; i+=3)
+		add_face(faces2[i], faces2[i+1], faces2[i+2]);
+
+	calc_face_normal();
+	calc_vertex_normal();
+}
+
+// -----------------------------------------------------------------------------
+
 void Polyhedron::draw_triangles(GLenum mode,int start=0, int interval=1) const{
 	/*
 	 * Dibuja los tríangulos del modelo.
@@ -258,7 +288,39 @@ void Polyhedron::draw_all() const{
 
 // -----------------------------------------------------------------------------
 
+void Polyhedron::draw_texture() const{
+  /*
+    Draw the texture.
+  */
+
+  glEnable(GL_TEXTURE_2D);
+  glBegin(GL_TRIANGLES);
+
+  for(int i = 0; i < faces.size(); i++){
+    if( texture_vertex[faces[i]._0].first != -1 &&
+        texture_vertex[faces[i]._1].first != -1 &&
+        texture_vertex[faces[i]._2].first != -1    ){
+      glTexCoord2f(texture_vertex[faces[i]._0].first,texture_vertex[faces[i]._0].second);
+      glVertex3fv((GLfloat *) &points[faces[i]._0]);
+      glTexCoord2f(texture_vertex[faces[i]._1].first,texture_vertex[faces[i]._1].second);
+      glVertex3fv((GLfloat *) &points[faces[i]._1]);
+      glTexCoord2f(texture_vertex[faces[i]._2].first,texture_vertex[faces[i]._2].second);
+      glVertex3fv((GLfloat *) &points[faces[i]._2]);
+    }
+
+  }
+
+  glEnd();
+  glDisable(GL_TEXTURE_2D);
+
+}
+
+// -----------------------------------------------------------------------------
+
 void Polyhedron::draw(DrawMode mode) const{
+
+	if(active_texture && !texture_vertex.empty())
+		draw_texture();
 
 	switch (mode) {
 		case ALL:
@@ -274,6 +336,9 @@ void Polyhedron::draw(DrawMode mode) const{
 			draw_edges();
 			break;
 		case POINTS:
+			draw_points();
+			break;
+		default:
 			draw_points();
 			break;
 	}
@@ -315,10 +380,10 @@ void Polyhedron::get_max_min_triangle_area() const{
 
 	double max_area = heron_formula( points[faces[0]._0],
 												points[faces[0]._1],
-												points[faces[0]._2]);;
+												points[faces[0]._2]);
 	double min_area = heron_formula( points[faces[1]._0],
 												points[faces[1]._1],
-												points[faces[1]._2]);;
+												points[faces[1]._2]);
 
 	for( unsigned int i = 2; i < size; i++ ){
 		area = heron_formula( points[faces[i]._0],

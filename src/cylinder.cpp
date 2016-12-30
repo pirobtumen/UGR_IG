@@ -2,13 +2,12 @@
 
 Cylinder::Cylinder(){
 
-  vector<RevolutionSurface::point> outline;
+  vector<point> outline;
 
-  outline.push_back(RevolutionSurface::point(0,0.5,0));
-  outline.push_back(RevolutionSurface::point(0,-0.5,0));
-  outline.push_back(RevolutionSurface::point(0.5,0.5,0));
-  outline.push_back(RevolutionSurface::point(0.5,-0.5,0));
+  outline.push_back(point(0,0.5,0));
+  outline.push_back(point(0.5,0.5,0));
+  outline.push_back(point(0.5,-0.5,0));
+  outline.push_back(point(0,-0.5,0));
 
-  set_points(outline);
-  spin(25);
+  set_points(outline,25);
 }

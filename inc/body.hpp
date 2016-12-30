@@ -11,7 +11,7 @@
 #include "arm2.hpp"
 #include "piece.hpp"
 #include "piecedoor.hpp"
-#include "rotatevar.hpp"
+#include "global.hpp"
 
 // -----------------------------------------------------------------------------
 

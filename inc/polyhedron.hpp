@@ -13,8 +13,9 @@
 #include "vertex.h"
 #include "object3d.hpp"
 #include "utilities.hpp"
+#include "file_ply_stl.h"
 
-#include "lightvar.hpp"
+#include "global.hpp"
 
 // -----------------------------------------------------------------------------
 
@@ -73,11 +74,12 @@ public:
 	void draw_surfaces(double r=0.02, double g=0.22, double b=0.52) const;
 	void draw_chess() const;
 	void draw_all() const;
+	void draw_texture() const;
 	void draw(DrawMode mode) const;
 
 	// Otros
 	// ---------------------------------------------------------------------------
-
+	void load_ply(char * filename);
 	bool has_degenerate_triangles() const;
 	void get_max_min_triangle_area() const;
 };

@@ -3,18 +3,19 @@
 // -----------------------------------------------------------------------------
 
 Sphere::Sphere(){
-  surface_points_number = 50;
+  profile_length = 50;
 
   generate_profile();
-  spin(50);
+  spin(profile_length);
 }
 
 // -----------------------------------------------------------------------------
 
 Sphere::Sphere(unsigned int profile_points){
-  surface_points_number = profile_points;
+  profile_length = profile_points;
 
   generate_profile();
+  spin(profile_length);
 }
 
 // -----------------------------------------------------------------------------
@@ -22,16 +23,16 @@ Sphere::Sphere(unsigned int profile_points){
 void Sphere::generate_profile(){
 
   const double radius = 0.5;
-  const double angle = -1*PI/surface_points_number;
+  const double angle = -1*PI/profile_length;
 
   point p(0,0.5,0);
-  point p2;
+  point p2(p);
 
-  points.push_back(point(0,0.5,0));
-  points.push_back(point(0,-0.5,0));
+  // TODO: remove clear
+  points.clear();
+  points.push_back(p);
 
-  for( int i = 0; i < surface_points_number; i++ ){
-
+  for( int i = 0; i < profile_length; i++ ){
     p2.x = p.x*cos(angle) - p.y*sin(angle);
     p2.y = p.x*sin(angle) + p.y*cos(angle);
 
@@ -39,6 +40,8 @@ void Sphere::generate_profile(){
 
     points.push_back(p2);
   }
+
+  points.push_back(point(0,-0.5,0));
 
 }
 

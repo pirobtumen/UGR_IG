@@ -21,7 +21,6 @@
 
 // Reducir los puntos del perfil X veces
 
-#include "rotatevar.hpp"
 
 #include "stdlib.h"
 #include "stdio.h"
@@ -49,10 +48,13 @@
 #include "piece.hpp"
 #include "piecedoor.hpp"
 
-#include "lightvar.hpp"
+#include "global.hpp"
 
 #include "jpg_imagen.hpp"
 #include "cube2.hpp"
+#include "revolutionsurface2.hpp"
+#include "scene.hpp"
+
 
 // tamaño de los ejes
 const int AXIS_SIZE=5000;
@@ -76,14 +78,14 @@ int UI_window_pos_x=50,UI_window_pos_y=50,UI_window_width=800,UI_window_height=8
 // ----------------------------------------------------------------------------
 
 enum DrawItem { CUBE, TETRAHEDRON, FILE_MODEL, REVOLUTION, WATT, BOARD };
-enum SelectIem { ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN };
+enum SelectIem { ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT };
 
 const int SPIN_JUMP = 1;
 unsigned int num_surfaces = 50;
 bool need_spin = false;
 
 Cube cube;
-Cube cube2;
+Cube2 cube2;
 Tetrahedron tetrahedron;
 Board board;
 
@@ -92,27 +94,21 @@ Polyhedron file_model2;
 Polyhedron file_model3;
 
 //RevolutionSurface cylinder;
-RevolutionSurface glass;
-RevolutionSurface inv_glass;
-RevolutionSurface cone;
-RevolutionSurface tube;
-RevolutionSurface pawn;
+RevolutionSurface2 glass;
+RevolutionSurface2 inv_glass;
+RevolutionSurface2 cone;
+RevolutionSurface2 tube;
+RevolutionSurface2 pawn;
 Sphere sphere;
 Cylinder cylinder;
 
 Watt watt;
+Scene scene;
 
-//DrawMode draw_mode = POINTS;
-//DrawItem draw_item = TETRAHEDRON;
-SelectIem selected_item = ONE;
+SelectIem selected_item = EIGHT;
 
 DrawMode draw_mode = SURFACES;
-DrawItem draw_item = BOARD;
-
-// Texturas
-// -----------------------------------------------------------------------------
-
-jpg::Imagen * board_texture = NULL;
+DrawItem draw_item = REVOLUTION;
 
 // Iluminación
 // -----------------------------------------------------------------------------
@@ -185,7 +181,11 @@ void read_polygon_from_file(char * filename, Polyhedron & model){
 // -----------------------------------------------------------------------------
 
 void load_textures(){
-	board_texture = new jpg::Imagen("texturas/dia_8192.jpg");
+	earth_texture = new jpg::Imagen("texturas/dia_8192.jpg");
+	chess_texture = new jpg::Imagen("texturas/chess.jpg");
+	stars_texture = new jpg::Imagen("texturas/stars.jpg");
+	grass_texture = new jpg::Imagen("texturas/grass.jpg");
+	can_texture = new jpg::Imagen("texturas/text-lata-1.jpg");
 
 	glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -194,7 +194,9 @@ void load_textures(){
 
 	glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE, GL_DECAL);
 
-	glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,board_texture -> tamX(),board_texture -> tamY(),0,GL_RGB,GL_UNSIGNED_BYTE, (GLvoid *) (board_texture -> leerPixels()));}
+	glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,earth_texture -> tamX(),earth_texture -> tamY(),0,GL_RGB,GL_UNSIGNED_BYTE, (GLvoid *) (earth_texture -> leerPixels()));
+	//glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,chess_texture -> tamX(),chess_texture -> tamY(),0,GL_RGB,GL_UNSIGNED_BYTE, (GLvoid *) (chess_texture -> leerPixels()));
+}
 
 // -----------------------------------------------------------------------------
 
@@ -292,6 +294,9 @@ void draw(){
 				case SEVEN:
 					draw_object(pawn);
 					break;
+				case EIGHT:
+					draw_object(scene);
+					break;
 			}
 
 			break;
@@ -301,7 +306,6 @@ void draw(){
 			break;
 
 		case BOARD:
-			board.draw_texture();
 			draw_object(board);
 			break;
 	}
@@ -335,9 +339,9 @@ void read_models(){
 	char filename2[] = "./modelos/big_porsche.ply";
 	char filename3[] = "./modelos/dolphins.ply";
 
-	read_polygon_from_file(filename1, file_model);
-	read_polygon_from_file(filename2, file_model2);
-	read_polygon_from_file(filename3, file_model3);
+	file_model.load_ply(filename1);
+	file_model2.load_ply(filename2);
+	file_model3.load_ply(filename3);
 }
 
 // -----------------------------------------------------------------------------
@@ -429,7 +433,7 @@ void init_light(){
 
 void generate_models(){
 
-	vector<RevolutionSurface::point> points;
+	vector<Polyhedron::point> points;
 
 	sphere.spin(num_surfaces);
 
@@ -442,66 +446,60 @@ void generate_models(){
 	// ---------------------------------------------------------------------------
 
 	points.clear();
-	points.push_back(RevolutionSurface::point(0.75,0.5,0));
-	points.push_back(RevolutionSurface::point(0.5,-0.5,0));
-	points.push_back(RevolutionSurface::point(0,-0.5,0));
+	points.push_back(Polyhedron::point(0.75,0.5,0));
+	points.push_back(Polyhedron::point(0.5,-0.5,0));
+	points.push_back(Polyhedron::point(0,-0.5,0));
 
-	glass.set_points(points);
-	glass.spin(num_surfaces);
+	glass.set_points(points,num_surfaces);
 
 	// Inverted Glass
 	// ---------------------------------------------------------------------------
 
 	points.clear();
-	points.push_back(RevolutionSurface::point(0,0.5,0));
-	points.push_back(RevolutionSurface::point(0.5,0.5,0));
-	points.push_back(RevolutionSurface::point(0.75,-0.5,0));
+	points.push_back(Polyhedron::point(0,0.5,0));
+	points.push_back(Polyhedron::point(0.5,0.5,0));
+	points.push_back(Polyhedron::point(0.75,-0.5,0));
 
-	inv_glass.set_points(points);
-	inv_glass.spin(num_surfaces);
+	inv_glass.set_points(points,num_surfaces);
 
 	// Cone
 	// ---------------------------------------------------------------------------
 
 	points.clear();
-	points.push_back(RevolutionSurface::point(0,0.5,0));
-	points.push_back(RevolutionSurface::point(0,-0.5,0));
-	points.push_back(RevolutionSurface::point(0.5,-0.5,0));
+	points.push_back(Polyhedron::point(0,0.5,0));
+	points.push_back(Polyhedron::point(0.5,-0.5,0));
+	points.push_back(Polyhedron::point(0,-0.5,0));
 
-	cone.set_points(points);
-	cone.spin(num_surfaces);
+	cone.set_points(points,num_surfaces);
 
 	// Tube
 	// ---------------------------------------------------------------------------
 
 	points.clear();
-	points.push_back(RevolutionSurface::point(0.5,0.5,0));
-	points.push_back(RevolutionSurface::point(0.5,-0.5,0));
+	points.push_back(Polyhedron::point(0.5,-0.5,0));
+	points.push_back(Polyhedron::point(0.5,0.5,0));
 
-	tube.set_points(points);
-	tube.spin(num_surfaces);
+	tube.set_points(points,num_surfaces);
 
 	// Pawn
 	// ---------------------------------------------------------------------------
 
 	points.clear();
-	points.push_back(RevolutionSurface::point(0,1.4,0)); // Base superior
-	points.push_back(RevolutionSurface::point(0,-1.4,0)); // Base inferior
+	points.push_back(Polyhedron::point(0,1.4,0)); // Base superior
+	points.push_back(Polyhedron::point(0.3,1.4,0));
+	points.push_back(Polyhedron::point(0.5,1.2,0));
+	points.push_back(Polyhedron::point(0.55,1,0));
+	points.push_back(Polyhedron::point(0.5,0.8,0));
+	points.push_back(Polyhedron::point(0.3,0.6,0));
+	points.push_back(Polyhedron::point(0.5,0.6,0));
+	points.push_back(Polyhedron::point(0.4,0.5,0));
+	points.push_back(Polyhedron::point(0.4,-0.4,0));
+	points.push_back(Polyhedron::point(0.5,-0.7,0));
+	points.push_back(Polyhedron::point(1,-1.1,0));
+	points.push_back(Polyhedron::point(1,-1.4,0));
+	points.push_back(Polyhedron::point(0,-1.4,0)); // Base inferior
 
-	points.push_back(RevolutionSurface::point(0.3,1.4,0)); // Base superior
-	points.push_back(RevolutionSurface::point(0.5,1.2,0));
-	points.push_back(RevolutionSurface::point(0.55,1,0));
-	points.push_back(RevolutionSurface::point(0.5,0.8,0));
-	points.push_back(RevolutionSurface::point(0.3,0.6,0));
-	points.push_back(RevolutionSurface::point(0.5,0.6,0));
-	points.push_back(RevolutionSurface::point(0.4,0.5,0));
-	points.push_back(RevolutionSurface::point(0.4,-0.4,0));
-	points.push_back(RevolutionSurface::point(0.5,-0.7,0));
-	points.push_back(RevolutionSurface::point(1,-1.1,0));
-	points.push_back(RevolutionSurface::point(1,-1.4,0)); // Base inferior
-
-	pawn.set_points(points);
-	pawn.spin(num_surfaces);
+	pawn.set_points(points,num_surfaces);
 
 }
 
@@ -644,7 +642,8 @@ void change_window_size(int Ancho1,int Alto1)
 
 void normal_keys(unsigned char Tecla1,int x,int y)
 {
-
+	// More keys
+	int key_modifier = glutGetModifiers();
 
 	switch(toupper(Tecla1)){
 		case 'Q':
@@ -672,8 +671,14 @@ void normal_keys(unsigned char Tecla1,int x,int y)
 			break;
 
 		case 'T':
-			disable_lighting();
-			draw_mode = ALL;
+			if(key_modifier == GLUT_ACTIVE_ALT){
+				active_texture = !active_texture;
+			}
+			else{
+				disable_lighting();
+				draw_mode = ALL;
+			}
+
 			break;
 
 		case '1':
@@ -697,6 +702,9 @@ void normal_keys(unsigned char Tecla1,int x,int y)
 			break;
 		case '7':
 			selected_item = SEVEN;
+			break;
+		case '8':
+			selected_item = EIGHT;
 			break;
 
 		case '+':
@@ -941,7 +949,7 @@ int main(int argc, char **argv)
 	glutMainLoop();
 
 	// Liberamos las texturas
-	delete board_texture;
+	delete earth_texture;
 
 	return 0;
 }

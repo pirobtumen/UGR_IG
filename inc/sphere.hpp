@@ -6,12 +6,12 @@
 #ifndef __SPHERE_HPP
 #define __SPHERE_HPP
 
-#include "revolutionsurface.hpp"
+#include "revolutionsurface2.hpp"
 #include <cmath>
 
 // -----------------------------------------------------------------------------
 
-class Sphere : public RevolutionSurface{
+class Sphere : public RevolutionSurface2{
 
 private:
   void generate_profile();

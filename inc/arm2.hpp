@@ -9,7 +9,7 @@
 #include "drawable.hpp"
 #include "arm.hpp"
 #include "cylinder.hpp"
-#include "rotatevar.hpp"
+#include "global.hpp"
 
 // -----------------------------------------------------------------------------
 

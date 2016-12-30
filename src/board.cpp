@@ -32,16 +32,16 @@ void Board::generate_board(int num_squares){
 
 void Board::calc_texture_vertex(int num_squares){
   // Select a region of the board
-  const int BOARD_START_X = 1;
-  const int BOARD_START_Y = 1;
-  const int BOARD_END_X = num_squares-1;
-  const int BOARD_END_Y = num_squares-1;
+  const int BOARD_START_X = 0;
+  const int BOARD_START_Y = 0;
+  const int BOARD_END_X = num_squares;
+  const int BOARD_END_Y = num_squares;
 
   // Select a region of the texture
-  const double TEXTURE_START_U = 0.25;
-  const double TEXTURE_START_V = 0.25;
-  const double TEXTURE_END_U = 0.75;
-  const double TEXTURE_END_V = 0.75;
+  const double TEXTURE_START_U = 0;
+  const double TEXTURE_START_V = 0;
+  const double TEXTURE_END_U = 1;
+  const double TEXTURE_END_V = 1;
 
   // Jump between two texture points
   const double JUMP_V = (double)(TEXTURE_END_V - TEXTURE_START_V)/num_squares;
@@ -74,33 +74,6 @@ void Board::calc_texture_vertex(int num_squares){
 
 // -----------------------------------------------------------------------------
 
-void Board::draw_texture(){
-  /*
-    Draw the texture.
-  */
-  glEnable(GL_TEXTURE_2D);
-  glBegin(GL_TRIANGLES);
-
-  for(int i = 0; i < faces.size(); i++){
-    if( texture_vertex[faces[i]._0].first != -1 &&
-        texture_vertex[faces[i]._1].first != -1 &&
-        texture_vertex[faces[i]._2].first != -1    ){
-      glTexCoord2f(texture_vertex[faces[i]._0].first,texture_vertex[faces[i]._0].second);
-      glVertex3fv((GLfloat *) &points[faces[i]._0]);
-      glTexCoord2f(texture_vertex[faces[i]._1].first,texture_vertex[faces[i]._1].second);
-      glVertex3fv((GLfloat *) &points[faces[i]._1]);
-      glTexCoord2f(texture_vertex[faces[i]._2].first,texture_vertex[faces[i]._2].second);
-      glVertex3fv((GLfloat *) &points[faces[i]._2]);
-    }
-
-  }
-
-  glEnd();
-  glDisable(GL_TEXTURE_2D);
-}
-
-// -----------------------------------------------------------------------------
-
 void Board::generate_vertex(int num_squares){
   double x_jump = 1.0/num_squares;
   double z_jump = 1.0/num_squares;
@@ -112,7 +85,6 @@ void Board::generate_vertex(int num_squares){
   p.x = -0.5f;
   p.y = 0;
   p.z = -0.5f;
-
 
   for(unsigned int z = 0; z <= num_squares; z++){
     for(unsigned int x = 0; x <= num_squares; x++){
