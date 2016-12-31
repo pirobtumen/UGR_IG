@@ -950,6 +950,10 @@ int main(int argc, char **argv)
 
 	// Liberamos las texturas
 	delete earth_texture;
+	delete grass_texture;
+	delete stars_texture;
+	delete chess_texture;
+	delete can_texture;
 
 	return 0;
 }
