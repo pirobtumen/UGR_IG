@@ -31,6 +31,9 @@ void Board::generate_board(int num_squares){
 // -----------------------------------------------------------------------------
 
 void Board::calc_texture_vertex(int num_squares){
+  bool INV_X = false;
+  bool INV_Y = false;
+
   // Select a region of the board
   const int BOARD_START_X = 0;
   const int BOARD_START_Y = 0;
@@ -59,13 +62,16 @@ void Board::calc_texture_vertex(int num_squares){
         texture_vertex.push_back(std::make_pair(-1,-1));
       }
       else{
-        u = x-BOARD_START_X;
-        v = y-BOARD_START_Y;
+        u = (((x-BOARD_START_X)/max_u)+TEXTURE_START_U)/(1+1-TEXTURE_END_U+TEXTURE_START_U);
+        v = (((y-BOARD_START_Y)/max_v)+TEXTURE_START_V)/(1+1-TEXTURE_END_V+TEXTURE_START_V);
 
-        texture_vertex.push_back(std::make_pair(
-          ((u/max_u)+TEXTURE_START_U)/(1+1-TEXTURE_END_U+TEXTURE_START_U),
-          ((v/max_v)+TEXTURE_START_V)/(1+1-TEXTURE_END_V+TEXTURE_START_V)
-        ));
+        if(INV_X)
+          u = 1 - u;
+
+        if(INV_Y)
+          v = 1 - v;
+
+        texture_vertex.push_back(std::make_pair(u,v));
       }
     }
   }

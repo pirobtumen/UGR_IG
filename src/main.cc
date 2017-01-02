@@ -220,6 +220,26 @@ void draw_object( const Drawable & obj ){
 
 // -----------------------------------------------------------------------------
 
+void set_material0(){
+	// Material por defecto
+	glMaterialfv(GL_FRONT,GL_AMBIENT, (GLfloat *) &material0_ambient);
+	glMaterialfv(GL_FRONT,GL_DIFFUSE, (GLfloat *) &material0_diffuse);
+	glMaterialfv(GL_FRONT,GL_SPECULAR, (GLfloat *) &material0_specular);
+	glMaterialf(GL_FRONT,GL_SHININESS,50);
+}
+
+// -----------------------------------------------------------------------------
+
+void set_material1(){
+	// Material por defecto
+	glMaterialfv(GL_FRONT,GL_AMBIENT, (GLfloat *) &material1_ambient);
+	glMaterialfv(GL_FRONT,GL_DIFFUSE, (GLfloat *) &material1_diffuse);
+	glMaterialfv(GL_FRONT,GL_SPECULAR, (GLfloat *) &material1_specular);
+	glMaterialf(GL_FRONT,GL_SHININESS,5);
+}
+
+// -----------------------------------------------------------------------------
+
 void draw(){
 	/*
 	 * Función encargada de dibujar un modelo.
@@ -296,6 +316,10 @@ void draw(){
 					break;
 				case EIGHT:
 					draw_object(scene);
+
+					// Set default texture
+					glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,earth_texture -> tamX(),earth_texture -> tamY(),0,GL_RGB,GL_UNSIGNED_BYTE, (GLvoid *) (earth_texture -> leerPixels()));
+					set_material0();
 					break;
 			}
 
@@ -307,29 +331,10 @@ void draw(){
 
 		case BOARD:
 			draw_object(board);
+
 			break;
 	}
 
-}
-
-// -----------------------------------------------------------------------------
-
-void set_material0(){
-	// Material por defecto
-	glMaterialfv(GL_FRONT,GL_AMBIENT, (GLfloat *) &material0_ambient);
-	glMaterialfv(GL_FRONT,GL_DIFFUSE, (GLfloat *) &material0_diffuse);
-	glMaterialfv(GL_FRONT,GL_SPECULAR, (GLfloat *) &material0_specular);
-	glMaterialf(GL_FRONT,GL_SHININESS,50);
-}
-
-// -----------------------------------------------------------------------------
-
-void set_material1(){
-	// Material por defecto
-	glMaterialfv(GL_FRONT,GL_AMBIENT, (GLfloat *) &material1_ambient);
-	glMaterialfv(GL_FRONT,GL_DIFFUSE, (GLfloat *) &material1_diffuse);
-	glMaterialfv(GL_FRONT,GL_SPECULAR, (GLfloat *) &material1_specular);
-	glMaterialf(GL_FRONT,GL_SHININESS,5);
 }
 
 // -----------------------------------------------------------------------------
