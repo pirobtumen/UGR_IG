@@ -170,6 +170,12 @@ enum ProjectionMode {PARALLEL,PERSPECTIVE};
 
 ProjectionMode projection_mode = PERSPECTIVE;
 
+bool mouse_move_camera = false;
+
+int x_prev;
+int y_prev;
+
+double mouse_sensitivity = 0.5;
 
 // -----------------------------------------------------------------------------
 //
@@ -553,7 +559,7 @@ void set_projection(){
 			//  Front_plane>0  Back_plane>PlanoDelantero)
 			glFrustum(-Window_width,Window_width,-Window_height,Window_height,Front_plane,Back_plane);
 			break;
-		case PROJECTION:
+		case PARALLEL:
 
 			// formato(x_minimo,x_maximo, y_minimo, y_maximo,Front_plane, plano_traser)
 			//  Front_plane>0  Back_plane>PlanoDelantero)
@@ -585,20 +591,40 @@ void change_projection(){
 
 void on_mouse_clicked(int button, int status, int x, int y){
 	/*
+		Handle the 'mouse click' event.
+
+		Click + Move -> Rotate camera.
 	*/
-	if(status == GLUT_DOWN){
-
+	if(button == 0 && status == GLUT_DOWN){
+		mouse_move_camera = true;
+		y_prev = y;
+		x_prev = x;
 	}
-	else{
-
+	else if(button == 3){
+		Observer_distance*=1.1;
 	}
+	else if(button == 4){
+		Observer_distance/=1.1;
+	}
+	else
+		mouse_move_camera = false;
+
+	glutPostRedisplay();
 }
 
 // -----------------------------------------------------------------------------
 
-void on_mouse_moved(){
+void on_mouse_moved(int x, int y){
 	/*
+		Move the camera if the mouse button is clicked.
 	*/
+	if(mouse_move_camera){
+		Observer_angle_y += (x-x_prev)*mouse_sensitivity;
+		Observer_angle_x += (y-y_prev)*mouse_sensitivity;
+		x_prev = x;
+		y_prev = y;
+		glutPostRedisplay();
+	}
 }
 
 // -----------------------------------------------------------------------------
@@ -916,42 +942,6 @@ int main(int argc, char **argv)
 	read_models();
 	generate_models();
 
-	// Comprobamos si hay triángulos degenerados -> Sólo big_porsche degenerado
-	// ---------------------------------------------------------------------------
-	/*
-	cout << "Degenerate: " << cube.has_degenerate_triangles() << endl;
-	cout << "Degenerate: " << tetrahedron.has_degenerate_triangles() << endl;
-
-	cout << "Degenerate: " << file_model.has_degenerate_triangles() << endl;
-	cout << "Degenerate: " << file_model2.has_degenerate_triangles() << endl;
-	cout << "Degenerate: " << file_model3.has_degenerate_triangles() << endl;
-
-	cout << "Degenerate: " << cylinder.has_degenerate_triangles() << endl;
-	cout << "Degenerate: " << glass.has_degenerate_triangles() << endl;
-	cout << "Degenerate: " << inv_glass.has_degenerate_triangles() << endl;
-	cout << "Degenerate: " << cone.has_degenerate_triangles() << endl;
-	cout << "Degenerate: " << tube.has_degenerate_triangles() << endl;
-	cout << "Degenerate: " << pawn.has_degenerate_triangles() << endl;
-	*/
-
-	// Max/Min area test
-	// ---------------------------------------------------------------------------
-	/*
-	cube.get_max_min_triangle_area();
-	tetrahedron.get_max_min_triangle_area();
-
-	file_model.get_max_min_triangle_area();
-	file_model2.get_max_min_triangle_area();
-	file_model3.get_max_min_triangle_area();
-
-	cylinder.get_max_min_triangle_area();
-	glass.get_max_min_triangle_area();
-	inv_glass.get_max_min_triangle_area();
-	cone.get_max_min_triangle_area();
-	tube.get_max_min_triangle_area();
-	pawn.get_max_min_triangle_area();
-	*/
-
 	// ---------------------------------------------------------------------------
 
 	// se llama a la inicialización de glut
@@ -987,9 +977,9 @@ int main(int argc, char **argv)
 	// asignación de la funcion llamada "tecla_Especial" al evento correspondiente
 	glutSpecialFunc(special_keys);
 
-	// Eventos de ratón
-	//glMouseFunc();			// Click
-	//glMotionFunc(on_mouse_moved);			// Mover
+	// Mouse events
+	glutMouseFunc(on_mouse_clicked);			// Click
+	glutMotionFunc(on_mouse_moved);				// Mover
 
 	// funcion de inicialización
 	initialize();
