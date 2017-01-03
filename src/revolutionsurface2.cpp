@@ -19,6 +19,9 @@ RevolutionSurface2::RevolutionSurface2(const vector_points & points, unsigned in
 // -----------------------------------------------------------------------------
 
 void RevolutionSurface2::spin_profile(unsigned int num_divisions){
+  /*
+    Rotate the profile 'num_divisions' times.
+  */
   double jump = (double)(2*M_PI)/num_divisions;
   double angle = jump;
   double radius;
@@ -50,12 +53,15 @@ void RevolutionSurface2::spin_profile(unsigned int num_divisions){
 // -----------------------------------------------------------------------------
 
 void RevolutionSurface2::generate_faces(unsigned int num_divisions){
-
+  /*
+    Genereate the triangle mesh as if it were a board.
+  */
   int max_index = profile_length;
-  int stop = profile_length*num_divisions - 1;
+  int stop = profile_length*num_divisions - 1;  // Skip the last line
   face f;
   int i = 0;
   while(i < stop){
+    // Skip the last vertex of each line
     if( (i+1)%max_index == 0)
       i++;
 
@@ -63,6 +69,7 @@ void RevolutionSurface2::generate_faces(unsigned int num_divisions){
     f._1 = i+1;
     f._2 = i;
 
+    // Add if the area is not 0
     if(heron_formula( points[f._0], points[f._1], points[f._2]) != 0)
       faces.push_back(f);
 
@@ -70,6 +77,7 @@ void RevolutionSurface2::generate_faces(unsigned int num_divisions){
     f._1 = i+max_index;
     f._2 = i+max_index+1;
 
+    // Add if the area is not 0
     if(heron_formula( points[f._0], points[f._1], points[f._2]) != 0)
       faces.push_back(f);
 
@@ -81,6 +89,9 @@ void RevolutionSurface2::generate_faces(unsigned int num_divisions){
 // -----------------------------------------------------------------------------
 
 void RevolutionSurface2::set_points(const vector_points & new_points, unsigned int divisions){
+  /*
+    Set the first progile with angle 0.
+  */
   double radius;
   point rotated_point;
 
@@ -103,6 +114,9 @@ void RevolutionSurface2::set_points(const vector_points & new_points, unsigned i
 // -----------------------------------------------------------------------------
 
 void RevolutionSurface2::spin(unsigned int num_divisions){
+  /*
+    Spin the profile.
+  */
   // Reset
   points.resize(profile_length);
   faces.clear();
@@ -122,6 +136,7 @@ void RevolutionSurface2::spin(unsigned int num_divisions){
 
 void RevolutionSurface2::calc_texture_vertex(unsigned int divisions){
   /*
+    Calcule each vertex the same way as the board.
   */
 
   // Select a region of the board
@@ -152,13 +167,10 @@ void RevolutionSurface2::calc_texture_vertex(unsigned int divisions){
         texture_vertex.push_back(std::make_pair(-1,-1));
       }
       else{
-        u = x-BOARD_START_X;
-        v = y-BOARD_START_Y;
+        u = (((x-BOARD_START_X)/max_u)+TEXTURE_START_U)/(1+1-TEXTURE_END_U+TEXTURE_START_U);
+        v = (((y-BOARD_START_Y)/max_v)+TEXTURE_START_V)/(1+1-TEXTURE_END_V+TEXTURE_START_V);
 
-        texture_vertex.push_back(std::make_pair(
-          ((v/max_v)+TEXTURE_START_V)/(1+1-TEXTURE_END_V+TEXTURE_START_V),
-          ((u/max_u)+TEXTURE_START_U)/(1+1-TEXTURE_END_U+TEXTURE_START_U)
-        ));
+        texture_vertex.push_back(std::make_pair(1-v,u)); // Transpose + Invert X
       }
     }
   }
