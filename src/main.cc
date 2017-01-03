@@ -77,12 +77,26 @@ int UI_window_pos_x=50,UI_window_pos_y=50,UI_window_width=800,UI_window_height=8
 //
 // ----------------------------------------------------------------------------
 
+
+// Draw parameters
+// -----------------------------------------------------------------------------
+
+
 enum DrawItem { CUBE, TETRAHEDRON, FILE_MODEL, REVOLUTION, WATT, BOARD };
 enum SelectIem { ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT };
+
+
+// Parameters that control the number of divisions - RevolutionSurface
+// -----------------------------------------------------------------------------
 
 const int SPIN_JUMP = 1;
 unsigned int num_surfaces = 50;
 bool need_spin = false;
+
+
+// Models
+// -----------------------------------------------------------------------------
+
 
 Cube cube;
 Cube2 cube2;
@@ -93,12 +107,12 @@ Polyhedron file_model;
 Polyhedron file_model2;
 Polyhedron file_model3;
 
-//RevolutionSurface cylinder;
 RevolutionSurface2 glass;
 RevolutionSurface2 inv_glass;
 RevolutionSurface2 cone;
 RevolutionSurface2 tube;
 RevolutionSurface2 pawn;
+
 Sphere sphere;
 Cylinder cylinder;
 
@@ -110,8 +124,10 @@ SelectIem selected_item = EIGHT;
 DrawMode draw_mode = SURFACES;
 DrawItem draw_item = REVOLUTION;
 
-// Iluminación
+
+// Lighting
 // -----------------------------------------------------------------------------
+
 
 int light0_angle = 0;
 int light1_angle = 1;
@@ -142,45 +158,34 @@ _vertex4<float> light1_ambient(0.3,0.3,0.3,1);
 _vertex4<float> light1_diffuse(0.6,0.6,0.6,1);
 _vertex4<float> light1_specular(0.15,0.15,0.15,1);
 
-// TODO: crear materiales
 GLfloat light0_pos[4] = {0,10,0,1}; // Coordenadas homogéneas
 GLfloat light1_pos[4] = {0,0,10,0}; // Coordenadas homogéneas
 
-// Funciones
+
+// Camera
 // -----------------------------------------------------------------------------
 
-void read_polygon_from_file(char * filename, Polyhedron & model){
-	_file_ply ply_reader;
-	vector<float> vertex;
-	vector<int> faces;
 
-	unsigned int num_vertex;
-	unsigned int num_faces;
+enum ProjectionMode {PARALLEL,PERSPECTIVE};
 
-	ply_reader.open(filename);
-	ply_reader.read(vertex, faces);
-	ply_reader.close();
+ProjectionMode projection_mode = PERSPECTIVE;
 
-	num_vertex = vertex.size();
-	num_faces  = faces.size();
-
-	model.clear();
-	model.set_num_vertex(num_vertex/3);
-	model.set_num_faces(num_faces/3);
-
-	for( int i = 0; i < num_vertex; i+=3)
-		model.add_point(vertex[i], vertex[i+1], vertex[i+2]);
-
-	for( int i = 0; i < num_faces; i+=3)
-		model.add_face(faces[i], faces[i+1], faces[i+2]);
-
-	model.calc_face_normal();
-	model.calc_vertex_normal();
-}
 
 // -----------------------------------------------------------------------------
+//
+// FUNCTIONS
+//
+// -----------------------------------------------------------------------------
+
+
+// LOAD DATA
+// -----------------------------------------------------------------------------
+
 
 void load_textures(){
+	/*
+		Load all the textures.
+	*/
 	earth_texture = new jpg::Imagen("texturas/dia_8192.jpg");
 	chess_texture = new jpg::Imagen("texturas/chess.jpg");
 	stars_texture = new jpg::Imagen("texturas/stars.jpg");
@@ -200,251 +205,16 @@ void load_textures(){
 
 // -----------------------------------------------------------------------------
 
-void update_model(){
-
-	rotate_angle += max_rotate*speed/1000;
-
-	if(rotate_angle > max_rotate)
-		rotate_angle -= max_rotate;
-
-	glutPostRedisplay();
-}
-
-// -----------------------------------------------------------------------------
-
-void draw_object( const Drawable & obj ){
-
-	obj.draw(draw_mode);
-
-}
-
-// -----------------------------------------------------------------------------
-
-void set_material0(){
-	// Material por defecto
-	glMaterialfv(GL_FRONT,GL_AMBIENT, (GLfloat *) &material0_ambient);
-	glMaterialfv(GL_FRONT,GL_DIFFUSE, (GLfloat *) &material0_diffuse);
-	glMaterialfv(GL_FRONT,GL_SPECULAR, (GLfloat *) &material0_specular);
-	glMaterialf(GL_FRONT,GL_SHININESS,50);
-}
-
-// -----------------------------------------------------------------------------
-
-void set_material1(){
-	// Material por defecto
-	glMaterialfv(GL_FRONT,GL_AMBIENT, (GLfloat *) &material1_ambient);
-	glMaterialfv(GL_FRONT,GL_DIFFUSE, (GLfloat *) &material1_diffuse);
-	glMaterialfv(GL_FRONT,GL_SPECULAR, (GLfloat *) &material1_specular);
-	glMaterialf(GL_FRONT,GL_SHININESS,5);
-}
-
-// -----------------------------------------------------------------------------
-
-void draw(){
-	/*
-	 * Función encargada de dibujar un modelo.
-	 */
-
-	 // Recalcular los modelos generados por revolución si es necesario
- 	if( need_spin ){
-		sphere.spin(num_surfaces);
- 		cylinder.spin(num_surfaces);
- 		glass.spin(num_surfaces);
- 		inv_glass.spin(num_surfaces);
- 		cone.spin(num_surfaces);
- 		tube.spin(num_surfaces);
- 		pawn.spin(num_surfaces);
-
- 		need_spin = false;
- 	}
-
-	glColor3f(0,0,0);
-	glPointSize(4);
-
-	switch (draw_item) {
-		case CUBE:
-			glPushMatrix();
-				glTranslatef(0.8,0,0);
-				draw_object(cube);
-			glPopMatrix();
-			glPushMatrix();
-				glTranslatef(-0.8,0,0);
-				draw_object(cube2);
-			glPopMatrix();
-			break;
-		case TETRAHEDRON:
-			draw_object(tetrahedron);
-			break;
-		case FILE_MODEL:
-
-			switch (selected_item) {
-				case ONE:
-					draw_object(file_model);
-					break;
-				case TWO:
-					draw_object(file_model2);
-					break;
-				case THREE:
-					draw_object(file_model3);
-					break;
-				}
-			break;
-
-		case REVOLUTION:
-
-			switch (selected_item) {
-				case ONE:
-					draw_object(cylinder);
-					break;
-				case TWO:
-					draw_object(glass);
-					break;
-				case THREE:
-					draw_object(inv_glass);
-					break;
-				case FOUR:
-					draw_object(cone);
-					break;
-				case FIVE:
-					draw_object(tube);
-					break;
-				case SIX:
-					draw_object(sphere);
-					break;
-				case SEVEN:
-					draw_object(pawn);
-					break;
-				case EIGHT:
-					draw_object(scene);
-
-					// Set default texture
-					glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,earth_texture -> tamX(),earth_texture -> tamY(),0,GL_RGB,GL_UNSIGNED_BYTE, (GLvoid *) (earth_texture -> leerPixels()));
-					set_material0();
-					break;
-			}
-
-			break;
-
-		case WATT:
-			draw_object(watt);
-			break;
-
-		case BOARD:
-			draw_object(board);
-
-			break;
-	}
-
-}
-
-// -----------------------------------------------------------------------------
-
-void read_models(){
-	char filename1[] = "./modelos/ant.ply";
-	char filename2[] = "./modelos/big_porsche.ply";
-	char filename3[] = "./modelos/dolphins.ply";
-
-	file_model.load_ply(filename1);
-	file_model2.load_ply(filename2);
-	file_model3.load_ply(filename3);
-}
-
-// -----------------------------------------------------------------------------
-
-void disable_lighting(){
-	light_mode = NONE;
-	glDisable(GL_LIGHTING);
-	glEnable(GL_COLOR_MATERIAL);
-}
-
-// -----------------------------------------------------------------------------
-
-void enable_lighting(){
-	glDisable(GL_COLOR_MATERIAL);
-	glEnable(GL_LIGHTING);
-}
-
-// -----------------------------------------------------------------------------
-
-void draw_light0(){
-	glPushMatrix();
-	glRotatef(light0_angle,0,0,1);
-	glLightfv(GL_LIGHT0,GL_POSITION,(GLfloat *) &light0_pos);
-	glPopMatrix();
-}
-
-// -----------------------------------------------------------------------------
-
-void draw_light1(){
-	glPushMatrix();
-	glRotatef(light1_angle,0,1,0);
-	glLightfv(GL_LIGHT1,GL_POSITION,(GLfloat *) &light1_pos);
-	glPopMatrix();
-}
-
-// -----------------------------------------------------------------------------
-
-void init_light(){
-	/*
-		Inicializamos los parámetros de iluminación
-	*/
-	material0_diffuse *= material0_diffuse_strength;
-	material0_ambient *= material0_ambient_strength;
-	material0_specular *= material0_specular_strength;
-
-	material1_diffuse *= material1_diffuse_strength;
-	material1_ambient *= material1_ambient_strength;
-	material1_specular *= material1_specular_strength;
-
-	glLightModelfv(GL_LIGHT_MODEL_AMBIENT,ambient_light);
-	glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER,GL_TRUE);
-
-	// Default mateiral
-	set_material0();
-
-	// Luz 0 - Posicional (w=0)
-	glLightfv(GL_LIGHT1,GL_AMBIENT,(GLfloat *) &light0_ambient);
-	glLightfv(GL_LIGHT1,GL_DIFFUSE,(GLfloat *) &light0_diffuse);
-	glLightfv(GL_LIGHT1,GL_SPECULAR,(GLfloat *) &light0_specular);
-	draw_light0();
-
-	// Luz 1 - Direccional (w=0)
-	glLightfv(GL_LIGHT1,GL_POSITION,(GLfloat *) &light1_pos);
-	glLightfv(GL_LIGHT1,GL_AMBIENT,(GLfloat *) &light1_ambient);
-	glLightfv(GL_LIGHT1,GL_DIFFUSE,(GLfloat *) &light1_diffuse);
-	draw_light1();
-
-	// Tipo de iluminación pr defecto
-	glShadeModel(GL_FLAT);
-
-	/*
-		Si quieremos que se utilice el color dado a los triángulos.
-	*/
-	//glEnable(GL_COLOR_MATERIAL);
-	glEnable(GL_LIGHT0);
-	glEnable(GL_LIGHT1);
-
-	/*
-		Si haces un glScale, independientemente de si utilizas marcos de pila
-								glPushMatrix y glPopMatrix
-		El escalado también influye en "normal matrix", por lo que hay que
-		establecer GL_NORMALIZE para que se vuelvan a normalizar las normales
-		y la iluminación se calcule bien.
-	*/
-	glEnable(GL_NORMALIZE);
-}
-
-// -----------------------------------------------------------------------------
-
 void generate_models(){
-
+	/*
+		Generate RevolutionSurface objects from a profile of points.
+	*/
 	vector<Polyhedron::point> points;
 
+	// Sphere
 	sphere.spin(num_surfaces);
 
-	// Cilindro
-	// ---------------------------------------------------------------------------
-
+	// Cylinder
 	cylinder.spin(num_surfaces);
 
 	// Glass
@@ -508,145 +278,336 @@ void generate_models(){
 
 }
 
+// -----------------------------------------------------------------------------
 
-//**************************************************************************
-//
-//***************************************************************************
+void read_models(){
+	/*
+		Load models from a '.ply' file.
+	*/
+	char filename1[] = "./modelos/ant.ply";
+	char filename2[] = "./modelos/big_porsche.ply";
+	char filename3[] = "./modelos/dolphins.ply";
 
-void clear_window()
-{
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	file_model.load_ply(filename1);
+	file_model2.load_ply(filename2);
+	file_model3.load_ply(filename3);
 }
 
 
-//**************************************************************************
-// Funcion para definir la transformación de proyeccion
-//***************************************************************************
+// UPDATE VIEW
+// -----------------------------------------------------------------------------
 
-void change_projection()
-{
+
+void update_model(){
+	/*
+		Rotate de body of the Watt Object.
+	*/
+
+	// Only if the WATT Object is selected
+	if(draw_item == WATT){
+		rotate_angle += max_rotate*speed/1000;
+
+		if(rotate_angle > max_rotate)
+			rotate_angle -= max_rotate;
+
+		glutPostRedisplay();
+	}
+}
+
+// -----------------------------------------------------------------------------
+
+void set_material0(){
+	/*
+		Active material0.
+	*/
+	glMaterialfv(GL_FRONT,GL_AMBIENT, (GLfloat *) &material0_ambient);
+	glMaterialfv(GL_FRONT,GL_DIFFUSE, (GLfloat *) &material0_diffuse);
+	glMaterialfv(GL_FRONT,GL_SPECULAR, (GLfloat *) &material0_specular);
+	glMaterialf(GL_FRONT,GL_SHININESS,50);
+}
+
+// -----------------------------------------------------------------------------
+
+void set_material1(){
+	/*
+		Active material1.
+	*/
+	glMaterialfv(GL_FRONT,GL_AMBIENT, (GLfloat *) &material1_ambient);
+	glMaterialfv(GL_FRONT,GL_DIFFUSE, (GLfloat *) &material1_diffuse);
+	glMaterialfv(GL_FRONT,GL_SPECULAR, (GLfloat *) &material1_specular);
+	glMaterialf(GL_FRONT,GL_SHININESS,5);
+}
+
+// -----------------------------------------------------------------------------
+
+void draw(){
+	/*
+	 		Draw the current object selected by the user.
+	 */
+
+	 // If it's needed, reload the revolution objects.
+ 	if( need_spin ){
+		sphere.spin(num_surfaces);
+ 		cylinder.spin(num_surfaces);
+ 		glass.spin(num_surfaces);
+ 		inv_glass.spin(num_surfaces);
+ 		cone.spin(num_surfaces);
+ 		tube.spin(num_surfaces);
+ 		pawn.spin(num_surfaces);
+
+ 		need_spin = false;
+ 	}
+
+	// Default parameters
+	glPointSize(4);
+
+	// Draw
+	switch (draw_item) {
+		case CUBE:
+			glPushMatrix();
+				glTranslatef(0.8,0,0);
+				cube.draw(draw_mode);
+			glPopMatrix();
+			glPushMatrix();
+				glTranslatef(-0.8,0,0);
+				cube2.draw(draw_mode);
+			glPopMatrix();
+			break;
+
+		case TETRAHEDRON:
+			tetrahedron.draw(draw_mode);
+			break;
+
+		case FILE_MODEL:
+			switch (selected_item) {
+				case ONE:
+					file_model.draw(draw_mode);
+					break;
+				case TWO:
+					file_model2.draw(draw_mode);
+					break;
+				case THREE:
+					file_model3.draw(draw_mode);
+					break;
+				}
+			break;
+
+		// REVOLUTION MENU
+		case REVOLUTION:
+			switch (selected_item) {
+				case ONE:
+					cylinder.draw(draw_mode);
+					break;
+				case TWO:
+					glass.draw(draw_mode);
+					break;
+				case THREE:
+					inv_glass.draw(draw_mode);
+					break;
+				case FOUR:
+					cone.draw(draw_mode);
+					break;
+				case FIVE:
+					tube.draw(draw_mode);
+					break;
+				case SIX:
+					sphere.draw(draw_mode);
+					break;
+				case SEVEN:
+					pawn.draw(draw_mode);
+					break;
+				case EIGHT:
+					scene.draw(draw_mode);
+
+					// Set default texture/material
+					glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,earth_texture -> tamX(),earth_texture -> tamY(),0,GL_RGB,GL_UNSIGNED_BYTE, (GLvoid *) (earth_texture -> leerPixels()));
+					set_material0();
+					break;
+			}
+			break;
+
+		case WATT:
+			watt.draw(draw_mode);
+			break;
+
+		case BOARD:
+			board.draw(draw_mode);
+			break;
+	}
+
+}
+
+// -----------------------------------------------------------------------------
+
+void disable_lighting(){
+	/*
+		Disable lighting.
+	*/
+	light_mode = NONE;
+	glDisable(GL_LIGHTING);
+	glEnable(GL_COLOR_MATERIAL);
+}
+
+// -----------------------------------------------------------------------------
+
+void enable_lighting(){
+	/*
+		Enable lighting.
+	*/
+	glDisable(GL_COLOR_MATERIAL);
+	glEnable(GL_LIGHTING);
+}
+
+// -----------------------------------------------------------------------------
+
+void draw_light0(){
+	/*
+		Rotate 'light0'.
+	*/
+	glPushMatrix();
+	glRotatef(light0_angle,0,0,1);
+	glLightfv(GL_LIGHT0,GL_POSITION,(GLfloat *) &light0_pos);
+	glPopMatrix();
+}
+
+// -----------------------------------------------------------------------------
+
+void draw_light1(){
+	/*
+		Rotate 'light1'.
+	*/
+	glPushMatrix();
+	glRotatef(light1_angle,0,1,0);
+	glLightfv(GL_LIGHT1,GL_POSITION,(GLfloat *) &light1_pos);
+	glPopMatrix();
+}
+
+// -----------------------------------------------------------------------------
+
+void init_light(){
+	/*
+		Initialize lighting parameters.
+	*/
+	material0_diffuse *= material0_diffuse_strength;
+	material0_ambient *= material0_ambient_strength;
+	material0_specular *= material0_specular_strength;
+
+	material1_diffuse *= material1_diffuse_strength;
+	material1_ambient *= material1_ambient_strength;
+	material1_specular *= material1_specular_strength;
+
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT,ambient_light);
+	glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER,GL_TRUE);
+
+	// Default mateiral
+	set_material0();
+
+	// Luz 0 - Posicional (w=0)
+	glLightfv(GL_LIGHT1,GL_AMBIENT,(GLfloat *) &light0_ambient);
+	glLightfv(GL_LIGHT1,GL_DIFFUSE,(GLfloat *) &light0_diffuse);
+	glLightfv(GL_LIGHT1,GL_SPECULAR,(GLfloat *) &light0_specular);
+	draw_light0();
+
+	// Luz 1 - Direccional (w=0)
+	glLightfv(GL_LIGHT1,GL_POSITION,(GLfloat *) &light1_pos);
+	glLightfv(GL_LIGHT1,GL_AMBIENT,(GLfloat *) &light1_ambient);
+	glLightfv(GL_LIGHT1,GL_DIFFUSE,(GLfloat *) &light1_diffuse);
+	draw_light1();
+
+	// Default lighting
+	light_mode = FLAT;
+	glShadeModel(GL_FLAT);
+
+	/*
+		Si quieremos que se utilice el color dado a los triángulos.
+	*/
+	//glEnable(GL_COLOR_MATERIAL);
+	glEnable(GL_LIGHT0);
+	glEnable(GL_LIGHT1);
+
+	/*
+		Si haces un glScale, independientemente de si utilizas marcos de pila
+								glPushMatrix y glPopMatrix
+		El escalado también influye en "normal matrix", por lo que hay que
+		establecer GL_NORMALIZE para que se vuelvan a normalizar las normales
+		y la iluminación se calcule bien.
+	*/
+	glEnable(GL_NORMALIZE);
+}
+
+// INPUT EVENTS
+// -----------------------------------------------------------------------------
+
+
+void set_projection(){
+	/*
+		Set the camera mode.
+	*/
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	// formato(x_minimo,x_maximo, y_minimo, y_maximo,Front_plane, plano_traser)
-	//  Front_plane>0  Back_plane>PlanoDelantero)
-	glFrustum(-Window_width,Window_width,-Window_height,Window_height,Front_plane,Back_plane);
-}
+	switch(projection_mode){
+		case PERSPECTIVE:
 
-//**************************************************************************
-// Funcion para definir la transformación de vista (posicionar la camara)
-//***************************************************************************
+			// formato(x_minimo,x_maximo, y_minimo, y_maximo,Front_plane, plano_traser)
+			//  Front_plane>0  Back_plane>PlanoDelantero)
+			glFrustum(-Window_width,Window_width,-Window_height,Window_height,Front_plane,Back_plane);
+			break;
+		case PROJECTION:
 
-void change_observer()
-{
-
-	// posicion del observador
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glTranslatef(0,0,-Observer_distance);
-	glRotatef(Observer_angle_x,1,0,0);
-	glRotatef(Observer_angle_y,0,1,0);
-}
-
-//**************************************************************************
-// Funcion que dibuja los ejes utilizando la primitiva grafica de lineas
-//***************************************************************************
-
-void draw_axis()
-{
-	glBegin(GL_LINES);
-	// eje X, color rojo
-	glColor3f(1,0,0);
-	glVertex3f(-AXIS_SIZE,0,0);
-	glVertex3f(AXIS_SIZE,0,0);
-	// eje Y, color verde
-	glColor3f(0,1,0);
-	glVertex3f(0,-AXIS_SIZE,0);
-	glVertex3f(0,AXIS_SIZE,0);
-	// eje Z, color azul
-	glColor3f(0,0,1);
-	glVertex3f(0,0,-AXIS_SIZE);
-	glVertex3f(0,0,AXIS_SIZE);
-	glEnd();
-}
-
-
-//**************************************************************************
-// Funcion que dibuja los objetos
-//***************************************************************************
-
-void draw_objects()
-{
-	GLfloat Vertices[8][3]= {{5,0,0},{4,4,0},{0,5,0},{-4,4,0},{-5,0,0},{-4,-4,0},{0,-5,0},{4,-4,0}};
-	int i;
-
-	glColor3f(0,1,0);
-	glPointSize(4);
-
-	glBegin(GL_POINTS);
-	for (i=0;i<8;i++){
-		glVertex3fv((GLfloat *) &Vertices[i]);
-		}
-	glEnd();
-}
-
-
-//**************************************************************************
-//
-//***************************************************************************
-
-void draw_scene(void)
-{
-	// Deshabilitamos la luz
-	glDisable(GL_LIGHTING);
-
-	clear_window();
-	change_observer();
-	draw_axis();
-	//draw_objects();
-
-	// Iluminación
-	if(light_mode != NONE){
-		glEnable(GL_LIGHTING);
-
-		// Lighting - Position fixed
-		draw_light0();
-		draw_light1();
+			// formato(x_minimo,x_maximo, y_minimo, y_maximo,Front_plane, plano_traser)
+			//  Front_plane>0  Back_plane>PlanoDelantero)
+			glOrtho(-Window_width,Window_width,-Window_height,Window_height,Front_plane,Back_plane);
+			break;
 	}
 
-	// Modelos
-	draw();
-
-	glutSwapBuffers();
 }
 
-//***************************************************************************
-// Funcion llamada cuando se produce un cambio en el tamaño de la ventana
-//
-// el evento manda a la funcion:
-// nuevo ancho
-// nuevo alto
-//***************************************************************************
+// -----------------------------------------------------------------------------
 
-void change_window_size(int Ancho1,int Alto1)
-{
-	change_projection();
-	glViewport(0,0,Ancho1,Alto1);
-	glutPostRedisplay();
+void change_projection(){
+	/*
+		Change the camera mode.
+	*/
+	switch(projection_mode){
+		case PERSPECTIVE:
+			projection_mode = PARALLEL;
+			break;
+		case PARALLEL:
+			projection_mode = PERSPECTIVE;
+			break;
+	}
+
+	set_projection();
 }
 
+// -----------------------------------------------------------------------------
 
-//***************************************************************************
-// Funcion llamada cuando se produce aprieta una tecla normal
-//
-// el evento manda a la funcion:
-// codigo de la tecla
-// posicion x del raton
-// posicion y del raton
-//***************************************************************************
+void on_mouse_clicked(int button, int status, int x, int y){
+	/*
+	*/
+	if(status == GLUT_DOWN){
 
-void normal_keys(unsigned char Tecla1,int x,int y)
-{
+	}
+	else{
+
+	}
+}
+
+// -----------------------------------------------------------------------------
+
+void on_mouse_moved(){
+	/*
+	*/
+}
+
+// -----------------------------------------------------------------------------
+
+void normal_keys(unsigned char Tecla1,int x,int y){
+	/*
+		Key press events.
+	*/
+
 	// More keys
 	int key_modifier = glutGetModifiers();
 
@@ -656,8 +617,13 @@ void normal_keys(unsigned char Tecla1,int x,int y)
 			break;
 
 		case 'P':
-			disable_lighting();
-			draw_mode = POINTS;
+			if(key_modifier == GLUT_ACTIVE_ALT){
+				change_projection();
+			}
+			else{
+				disable_lighting();
+				draw_mode = POINTS;
+			}
 			break;
 
 		case 'A':
@@ -779,20 +745,12 @@ void normal_keys(unsigned char Tecla1,int x,int y)
 	glutPostRedisplay();
 }
 
-//***************************************************************************
-// Funcion llamada cuando se produce aprieta una tecla especial
-//
-// el evento manda a la funcion:
-// codigo de la tecla
-// posicion x del raton
-// posicion y del raton
+// -----------------------------------------------------------------------------
 
-//***************************************************************************
-
-void special_keys(int Tecla1,int x,int y)
+void special_keys(int key,int x,int y)
 {
 
-	switch (Tecla1){
+	switch (key){
 		case GLUT_KEY_LEFT:Observer_angle_y--;break;
 		case GLUT_KEY_RIGHT:Observer_angle_y++;break;
 		case GLUT_KEY_UP:Observer_angle_x--;break;
@@ -823,6 +781,95 @@ void special_keys(int Tecla1,int x,int y)
 }
 
 
+//**************************************************************************
+//
+//***************************************************************************
+
+void clear_window()
+{
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+}
+
+//**************************************************************************
+// Funcion para definir la transformación de vista (posicionar la camara)
+//***************************************************************************
+
+void change_observer()
+{
+
+	// posicion del observador
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glTranslatef(0,0,-Observer_distance);
+	glRotatef(Observer_angle_x,1,0,0);
+	glRotatef(Observer_angle_y,0,1,0);
+}
+
+//**************************************************************************
+// Funcion que dibuja los ejes utilizando la primitiva grafica de lineas
+//***************************************************************************
+
+void draw_axis()
+{
+	glBegin(GL_LINES);
+	// eje X, color rojo
+	glColor3f(1,0,0);
+	glVertex3f(-AXIS_SIZE,0,0);
+	glVertex3f(AXIS_SIZE,0,0);
+	// eje Y, color verde
+	glColor3f(0,1,0);
+	glVertex3f(0,-AXIS_SIZE,0);
+	glVertex3f(0,AXIS_SIZE,0);
+	// eje Z, color azul
+	glColor3f(0,0,1);
+	glVertex3f(0,0,-AXIS_SIZE);
+	glVertex3f(0,0,AXIS_SIZE);
+	glEnd();
+}
+
+// -----------------------------------------------------------------------------
+
+void draw_scene(void){
+
+	// Disable lighting
+	glDisable(GL_LIGHTING);
+
+	clear_window();
+	change_observer();
+	draw_axis();
+
+	// Lighting mode
+	if(light_mode != NONE){
+		glEnable(GL_LIGHTING);
+
+		// Lighting - Position fixed
+		draw_light0();
+		draw_light1();
+	}
+
+	// Draw scene
+	draw();
+
+	glutSwapBuffers();
+}
+
+
+//***************************************************************************
+// Funcion llamada cuando se produce un cambio en el tamaño de la ventana
+//
+// el evento manda a la funcion:
+// nuevo ancho
+// nuevo alto
+//***************************************************************************
+
+void change_window_size(int Ancho1,int Alto1)
+{
+	set_projection();
+	glViewport(0,0,Ancho1,Alto1);
+	glutPostRedisplay();
+}
+
+
 //***************************************************************************
 // Funcion de incializacion
 //***************************************************************************
@@ -846,8 +893,10 @@ void initialize(void)
 
 	// se habilita el z-bufer
 	glEnable(GL_DEPTH_TEST);
-	//
-	change_projection();
+
+	// Set the camera mode.
+	set_projection();
+
 	//
 	glViewport(0,0,UI_window_width,UI_window_height);
 }
@@ -937,6 +986,10 @@ int main(int argc, char **argv)
 	glutKeyboardFunc(normal_keys);
 	// asignación de la funcion llamada "tecla_Especial" al evento correspondiente
 	glutSpecialFunc(special_keys);
+
+	// Eventos de ratón
+	//glMouseFunc();			// Click
+	//glMotionFunc(on_mouse_moved);			// Mover
 
 	// funcion de inicialización
 	initialize();
