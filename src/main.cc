@@ -171,11 +171,13 @@ enum ProjectionMode {PARALLEL,PERSPECTIVE};
 ProjectionMode projection_mode = PERSPECTIVE;
 
 bool mouse_move_camera = false;
+double mouse_sensitivity = 0.5;
+
+double ortho_zoom = 2;
 
 int x_prev;
 int y_prev;
 
-double mouse_sensitivity = 0.5;
 
 // -----------------------------------------------------------------------------
 //
@@ -563,7 +565,7 @@ void set_projection(){
 
 			// formato(x_minimo,x_maximo, y_minimo, y_maximo,Front_plane, plano_traser)
 			//  Front_plane>0  Back_plane>PlanoDelantero)
-			glOrtho(-Window_width,Window_width,-Window_height,Window_height,Front_plane,Back_plane);
+			glOrtho(-Window_width*ortho_zoom,Window_width*ortho_zoom,-Window_height*ortho_zoom,Window_height*ortho_zoom,Front_plane,Back_plane);
 			break;
 	}
 
@@ -601,10 +603,20 @@ void on_mouse_clicked(int button, int status, int x, int y){
 		x_prev = x;
 	}
 	else if(button == 3){
-		Observer_distance*=1.1;
+		if(projection_mode == PERSPECTIVE)
+			Observer_distance*=1.1;
+		else{
+			ortho_zoom += 0.1;
+			set_projection();
+		}
 	}
 	else if(button == 4){
-		Observer_distance/=1.1;
+		if(projection_mode == PERSPECTIVE)
+			Observer_distance/=1.1;
+		else{
+			ortho_zoom -= 0.1;
+			set_projection();
+		}
 	}
 	else
 		mouse_move_camera = false;
