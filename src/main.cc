@@ -55,14 +55,11 @@
 #include "revolutionsurface2.hpp"
 #include "scene.hpp"
 
+#include "camera.hpp"
+
 
 // tamaño de los ejes
 const int AXIS_SIZE=5000;
-
-// variables que definen la posicion de la camara en coordenadas polares
-GLfloat Observer_distance;
-GLfloat Observer_angle_x;
-GLfloat Observer_angle_y;
 
 // variables que controlan la ventana y la transformacion de perspectiva
 GLfloat Window_width,Window_height,Front_plane,Back_plane;
@@ -169,6 +166,10 @@ GLfloat light1_pos[4] = {0,0,10,0}; // Coordenadas homogéneas
 enum ProjectionMode {PARALLEL,PERSPECTIVE};
 
 ProjectionMode projection_mode = PERSPECTIVE;
+
+Camera cameras[2];
+
+int current_camera = 0;
 
 bool mouse_move_camera = false;
 double mouse_sensitivity = 0.5;
@@ -604,7 +605,7 @@ void on_mouse_clicked(int button, int status, int x, int y){
 	}
 	else if(button == 3){
 		if(projection_mode == PERSPECTIVE)
-			Observer_distance*=1.1;
+			cameras[current_camera].add_z(0.1);
 		else{
 			ortho_zoom += 0.1;
 			set_projection();
@@ -612,7 +613,7 @@ void on_mouse_clicked(int button, int status, int x, int y){
 	}
 	else if(button == 4){
 		if(projection_mode == PERSPECTIVE)
-			Observer_distance/=1.1;
+			cameras[current_camera].add_z(-0.1);
 		else{
 			ortho_zoom -= 0.1;
 			set_projection();
@@ -631,8 +632,8 @@ void on_mouse_moved(int x, int y){
 		Move the camera if the mouse button is clicked.
 	*/
 	if(mouse_move_camera){
-		Observer_angle_y += (x-x_prev)*mouse_sensitivity;
-		Observer_angle_x += (y-y_prev)*mouse_sensitivity;
+		cameras[current_camera].add_y_angle((x-x_prev)*mouse_sensitivity);
+		cameras[current_camera].add_x_angle((y-y_prev)*mouse_sensitivity);
 		x_prev = x;
 		y_prev = y;
 		glutPostRedisplay();
@@ -789,12 +790,12 @@ void special_keys(int key,int x,int y)
 {
 
 	switch (key){
-		case GLUT_KEY_LEFT:Observer_angle_y--;break;
-		case GLUT_KEY_RIGHT:Observer_angle_y++;break;
-		case GLUT_KEY_UP:Observer_angle_x--;break;
-		case GLUT_KEY_DOWN:Observer_angle_x++;break;
-		case GLUT_KEY_PAGE_UP:Observer_distance*=1.2;break;
-		case GLUT_KEY_PAGE_DOWN:Observer_distance/=1.2;break;
+		case GLUT_KEY_LEFT:cameras[current_camera].add_y_angle(-1); break;
+		case GLUT_KEY_RIGHT:cameras[current_camera].add_y_angle(1); break;
+		case GLUT_KEY_UP:cameras[current_camera].add_x_angle(-1); break;
+		case GLUT_KEY_DOWN:cameras[current_camera].add_x_angle(1); break;
+		case GLUT_KEY_PAGE_UP:cameras[current_camera].add_position(0,0,0.1); break;
+		case GLUT_KEY_PAGE_DOWN:cameras[current_camera].add_position(0,0,-0.1); break;
 		case GLUT_KEY_F1:
 			draw_item = TETRAHEDRON;
 			break;
@@ -838,9 +839,7 @@ void change_observer()
 	// posicion del observador
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	glTranslatef(0,0,-Observer_distance);
-	glRotatef(Observer_angle_x,1,0,0);
-	glRotatef(Observer_angle_y,0,1,0);
+	cameras[current_camera].update_view();
 }
 
 //**************************************************************************
@@ -873,7 +872,11 @@ void draw_scene(void){
 	glDisable(GL_LIGHTING);
 
 	clear_window();
+
+	// Select camera
 	change_observer();
+
+
 	draw_axis();
 
 	// Lighting mode
@@ -919,11 +922,6 @@ void initialize(void)
 	Window_height=0.5;
 	Front_plane=1;
 	Back_plane=1000;
-
-	// se inicia la posicion del observador, en el eje z
-	Observer_distance=2*Front_plane;
-	Observer_angle_x=0;
-	Observer_angle_y=0;
 
 	// se indica cual sera el color para limpiar la ventana	(r,v,a,al)
 	// blanco=(1,1,1,1) rojo=(1,0,0,1), ...

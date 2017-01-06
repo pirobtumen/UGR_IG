@@ -34,7 +34,7 @@ CC = g++
 default : $(BIN)/$(TARGETS)
 
 # regla de ejecucion
-$(BIN)/$(TARGETS) : $(OBJ)/main.o $(OBJ)/scene.o $(OBJ)/revolutionsurface.o $(OBJ)/revolutionsurface2.o $(OBJ)/cube.o $(OBJ)/cube2.o $(OBJ)/object3d.o $(OBJ)/polyhedron.o $(OBJ)/tetrahedron.o $(OBJ)/file_ply_stl.o $(OBJ)/utilities.o $(OBJ)/sphere.o $(OBJ)/reguladorwatt.o  $(OBJ)/base.o $(OBJ)/cylinder.o $(OBJ)/piece.o $(OBJ)/piecedoor.o $(OBJ)/arm.o $(OBJ)/arm2.o $(OBJ)/body.o $(OBJ)/global.o $(OBJ)/board.o $(OBJ)/jpg_imagen.o $(OBJ)/jpg_memsrc.o $(OBJ)/jpg_readwrite.o
+$(BIN)/$(TARGETS) : $(OBJ)/main.o $(OBJ)/camera.o $(OBJ)/scene.o $(OBJ)/revolutionsurface.o $(OBJ)/revolutionsurface2.o $(OBJ)/cube.o $(OBJ)/cube2.o $(OBJ)/object3d.o $(OBJ)/polyhedron.o $(OBJ)/tetrahedron.o $(OBJ)/file_ply_stl.o $(OBJ)/utilities.o $(OBJ)/sphere.o $(OBJ)/reguladorwatt.o  $(OBJ)/base.o $(OBJ)/cylinder.o $(OBJ)/piece.o $(OBJ)/piecedoor.o $(OBJ)/arm.o $(OBJ)/arm2.o $(OBJ)/body.o $(OBJ)/global.o $(OBJ)/board.o $(OBJ)/jpg_imagen.o $(OBJ)/jpg_memsrc.o $(OBJ)/jpg_readwrite.o
 	$(CC) -o $@ $^ $(CXXFLAGS) $(LDFLAGS)
 
 $(OBJ)/%.o : $(SRC)/%.cc
