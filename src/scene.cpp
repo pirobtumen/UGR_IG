@@ -71,6 +71,13 @@ void Scene::draw(DrawMode mode) const{
   glInitNames();
   glPushName(1);
 
+  glPushMatrix();
+  //glTranslatef(-0.19,0.075,0.2);
+  //glScaled(0.05,0.05,0.05);
+  pawn.draw(mode);
+  glPopMatrix();
+
+  /*
   glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,chess_texture -> tamX(),chess_texture -> tamY(),0,GL_RGB,GL_UNSIGNED_BYTE, (GLvoid *) (chess_texture -> leerPixels()));
   glPushMatrix();
   // No sé por qué pero es necesario invertir el tablero para que la luz
@@ -147,6 +154,6 @@ void Scene::draw(DrawMode mode) const{
   glScaled(0.05,0.05,0.05);
   pawn.draw(mode);
   glPopMatrix();
-
+  */
   active_texture = texture_status;
 }

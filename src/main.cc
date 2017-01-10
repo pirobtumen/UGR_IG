@@ -127,7 +127,9 @@ DrawItem draw_item = SCENE;
 
 
 int light0_angle = 0;
-int light1_angle = 1;
+int light0_angle2 = 0;
+int light1_angle = 0;
+int light1_angle2 = 0;
 
 GLfloat ambient_light[4] = {1,1,1,1};
 
@@ -495,7 +497,8 @@ void draw_light0(){
 		Rotate 'light0'.
 	*/
 	glPushMatrix();
-	glRotatef(light0_angle,0,0,1);
+	glRotatef(light0_angle,0,1,0);
+	glRotatef(light0_angle2,1,0,0);
 	glLightfv(GL_LIGHT0,GL_POSITION,(GLfloat *) &light0_pos);
 	glPopMatrix();
 }
@@ -508,6 +511,7 @@ void draw_light1(){
 	*/
 	glPushMatrix();
 	glRotatef(light1_angle,0,1,0);
+	glRotatef(light1_angle2,1,0,0);
 	glLightfv(GL_LIGHT1,GL_POSITION,(GLfloat *) &light1_pos);
 	glPopMatrix();
 }
@@ -675,9 +679,10 @@ int pick_element(int x, int y){
 	glRenderMode(GL_SELECT);
 
 	// 4. Fijar la transformación de proyección para la seleccion
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPickMatrix(x,(viewport[3] - y),5.0, 5.0, viewport);
+	//glMatrixMode(GL_PROJECTION);
+	//glPushMatrix();
+	//glLoadIdentity();
+	//gluPickMatrix(x,(viewport[3] - y),5.0, 5.0, viewport);
 
 	// Establecemos la proyección
 	set_projection();
@@ -688,6 +693,8 @@ int pick_element(int x, int y){
 	// 6. Pasar OpenGL a modo render
 	num_hits = glRenderMode(GL_RENDER);
 
+	//glPopMatrix();
+
 	// 7. Restablecer la transformación de proyección (sin gluPickMatrix)
 	reset_projection();
 
@@ -695,6 +702,12 @@ int pick_element(int x, int y){
 
 	// 8. Analizar el contenido del buffer de selección
 	hit = read_hit_buffer(hits,MAX_ITEMS);
+
+	for(int i = 0; i < 10; i++){
+		std::cout << hits[i] << std::endl;
+	}
+
+	std::cout << std::endl;
 
 	return hit;
 }
@@ -881,23 +894,48 @@ void normal_keys(unsigned char Tecla1,int x,int y){
 			break;
 
 		case 'E':
-			light0_angle = (light0_angle + 5) % 360;
-			draw_light0();
+			if(key_modifier == GLUT_ACTIVE_ALT){
+				light0_angle = (light0_angle - 5) % 360;
+				draw_light0();
+			}
+			else{
+				light0_angle = (light0_angle + 5) % 360;
+				draw_light0();
+			}
+
 			break;
 
 		case 'D':
-			light0_angle = (light0_angle - 5) % 360;
+		if(key_modifier == GLUT_ACTIVE_ALT){
+			light0_angle2 = (light0_angle2 - 5) % 360;
 			draw_light0();
+		}
+		else{
+			light0_angle2 = (light0_angle2 + 5) % 360;
+			draw_light0();
+		}
 			break;
 
 		case 'R':
-			light1_angle = (light1_angle + 5) % 360;
-			draw_light1();
+			if(key_modifier == GLUT_ACTIVE_ALT){
+				light1_angle = (light1_angle - 5) % 360;
+				draw_light1();
+			}
+			else{
+				light1_angle = (light1_angle + 5) % 360;
+				draw_light1();
+			}
 			break;
 
 		case 'F':
-			light1_angle = (light1_angle - 5) % 360;
-			draw_light1();
+			if(key_modifier == GLUT_ACTIVE_ALT){
+				light1_angle2 = (light1_angle2 - 5) % 360;
+				draw_light1();
+			}
+			else{
+				light1_angle2 = (light1_angle2 + 5) % 360;
+				draw_light1();
+			}
 			break;
 
 		case 'Z':
