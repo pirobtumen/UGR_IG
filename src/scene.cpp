@@ -68,8 +68,18 @@ void Scene::draw(DrawMode mode) const{
   _vertex4<float> material2_diffuse(0.6,0.6,0.6,1);
   _vertex4<float> material2_specular(0.6,0.6,0.6,1);
 
+  glInitNames();
+  glPushName(1);
+
   glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,chess_texture -> tamX(),chess_texture -> tamY(),0,GL_RGB,GL_UNSIGNED_BYTE, (GLvoid *) (chess_texture -> leerPixels()));
+  glPushMatrix();
+  // No sé por qué pero es necesario invertir el tablero para que la luz
+  // sea coherente.
+  glRotatef(180,0,0,1);
   board.draw(mode);
+  glPopMatrix();
+
+  glPushName(2);
 
   glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,grass_texture -> tamX(),grass_texture -> tamY(),0,GL_RGB,GL_UNSIGNED_BYTE, (GLvoid *) (grass_texture -> leerPixels()));
   glPushMatrix();
@@ -78,11 +88,15 @@ void Scene::draw(DrawMode mode) const{
   board.draw(mode);
   glPopMatrix();
 
+  glPushName(3);
+
   glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,stars_texture -> tamX(),stars_texture -> tamY(),0,GL_RGB,GL_UNSIGNED_BYTE, (GLvoid *) (stars_texture -> leerPixels()));
   glPushMatrix();
   glScaled(8,8,8);
   sphere.draw(mode);
   glPopMatrix();
+
+  glPushName(4);
 
   glPushMatrix();
   glTranslatef(0.8,0.2,0.8);
@@ -100,6 +114,8 @@ void Scene::draw(DrawMode mode) const{
   glMaterialfv(GL_FRONT,GL_SPECULAR, (GLfloat *) &material2_specular);
   glMaterialf(GL_FRONT,GL_SHININESS,10);
 
+  glPushName(5);
+
   glPushMatrix();
   glTranslatef(0.8,-0.02,0.8);
   glScaled(0.35,0.35,0.35);
@@ -111,6 +127,8 @@ void Scene::draw(DrawMode mode) const{
   glMaterialfv(GL_FRONT,GL_SPECULAR, (GLfloat *) &material0_specular);
   glMaterialf(GL_FRONT,GL_SHININESS,50);
 
+  glPushName(6);
+
   glPushMatrix();
   glTranslatef(-0.19,0.075,0.2);
   glScaled(0.05,0.05,0.05);
@@ -121,6 +139,8 @@ void Scene::draw(DrawMode mode) const{
   glMaterialfv(GL_FRONT,GL_DIFFUSE, (GLfloat *) &material1_diffuse);
   glMaterialfv(GL_FRONT,GL_SPECULAR, (GLfloat *) &material1_specular);
   glMaterialf(GL_FRONT,GL_SHININESS,5);
+
+  glPushName(7);
 
   glPushMatrix();
   glTranslatef(0.2,0.075,-0.19);
