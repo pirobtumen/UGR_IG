@@ -125,7 +125,7 @@ DrawItem draw_item = SCENE;
 // Lighting
 // -----------------------------------------------------------------------------
 
-
+// TODO: Create lighting.hpp & lighting.cpp / materials
 int light0_angle = 0;
 int light0_angle2 = 0;
 int light1_angle = 0;
@@ -149,10 +149,6 @@ _vertex4<float> material1_ambient(0,0,0.8,1);
 _vertex4<float> material1_diffuse(0,0,1,1);
 _vertex4<float> material1_specular(0.6,0.6,0.6,1);
 
-_vertex4<float> material_texture_ambient(0.3,0.3,0.3,1);
-_vertex4<float> material_texture_diffuse(0.8,0.8,0.8,1);
-_vertex4<float> material_texture_specular(0.2,0.2,0.2,1);
-
 _vertex4<float> light0_ambient(0.2,0.2,0.2,1);
 _vertex4<float> light0_diffuse(0.7,0.7,0.7,1);
 _vertex4<float> light0_specular(0.3,0.3,0.3,1);
@@ -168,6 +164,7 @@ GLfloat light1_pos[4] = {0,0,4,0}; // Coordenadas homogéneas
 // Camera
 // -----------------------------------------------------------------------------
 
+// TODO: Create camera.hpp & camera.cpp
 
 enum ProjectionMode {PARALLEL,PERSPECTIVE};
 
@@ -184,6 +181,8 @@ double ortho_zoom = 2;
 
 int x_prev;
 int y_prev;
+
+unsigned int selected_element = 0;
 
 
 // -----------------------------------------------------------------------------
@@ -206,6 +205,7 @@ void load_textures(){
 	stars_texture = new jpg::Imagen("texturas/stars.jpg");
 	grass_texture = new jpg::Imagen("texturas/grass.jpg");
 	can_texture = new jpg::Imagen("texturas/text-lata-1.jpg");
+	gold_texture = new jpg::Imagen("texturas/gold.jpg");
 
 	glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -215,8 +215,7 @@ void load_textures(){
 	//glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE, GL_DECAL);
 	glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
-	glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,earth_texture -> tamX(),earth_texture -> tamY(),0,GL_RGB,GL_UNSIGNED_BYTE, (GLvoid *) (earth_texture -> leerPixels()));
-	//glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,chess_texture -> tamX(),chess_texture -> tamY(),0,GL_RGB,GL_UNSIGNED_BYTE, (GLvoid *) (chess_texture -> leerPixels()));
+	set_texture(earth_texture);
 }
 
 // -----------------------------------------------------------------------------
@@ -328,18 +327,6 @@ void update_model(){
 
 		glutPostRedisplay();
 	}
-}
-
-// -----------------------------------------------------------------------------
-
-void set_texture_material(){
-	/*
-		Active material0.
-	*/
-	glMaterialfv(GL_FRONT,GL_AMBIENT, (GLfloat *) &material_texture_ambient);
-	glMaterialfv(GL_FRONT,GL_DIFFUSE, (GLfloat *) &material_texture_diffuse);
-	glMaterialfv(GL_FRONT,GL_SPECULAR, (GLfloat *) &material_texture_specular);
-	glMaterialf(GL_FRONT,GL_SHININESS,10);
 }
 
 // -----------------------------------------------------------------------------
@@ -459,11 +446,12 @@ void draw(){
 			break;
 
 		case SCENE:
+
+			scene.set_selected(selected_element);
 			scene.draw(draw_mode);
 
 			// Set default texture/material
-			glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,earth_texture -> tamX(),earth_texture -> tamY(),0,GL_RGB,GL_UNSIGNED_BYTE, (GLvoid *) (earth_texture -> leerPixels()));
-			set_texture_material();
+			set_texture(earth_texture);
 			break;
 	}
 
@@ -597,9 +585,6 @@ void set_projection(){
 			glFrustum(-Window_width,Window_width,-Window_height,Window_height,Front_plane,Back_plane);
 			break;
 		case PARALLEL:
-
-			// formato(x_minimo,x_maximo, y_minimo, y_maximo,Front_plane, plano_traser)
-			//  Front_plane>0  Back_plane>PlanoDelantero)
 			glOrtho(-Window_width*ortho_zoom,Window_width*ortho_zoom,-Window_height*ortho_zoom,Window_height*ortho_zoom,Front_plane,Back_plane);
 			break;
 	}
@@ -609,6 +594,9 @@ void set_projection(){
 // -----------------------------------------------------------------------------
 
 void reset_projection(){
+	/*
+		Clear GL_PROJECTION matrix and set the current projection.
+	*/
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	set_projection();
@@ -634,33 +622,52 @@ void change_projection(){
 
 // -----------------------------------------------------------------------------
 
-int read_hit_buffer(GLuint * hits, int size){
+// PREC: total_hits > 0
+int parse_hits(GLuint * hits, int size, int total_hits){
 
-	//for(int i = 0; i < 10; i++)
-		//std::cout << hits[i] << std::endl;
-/*
 	int index = 0;
 	int max_hit = hits[index];
-	while(index < size){
+	int count_hits = 0;
+	int max_index;
+
+	int depth = 0;
+	int hit = -1;
+
+	if(total_hits > 0){
+		depth = hits[2];
+		hit 	= hits[3];
+	}
+
+	while(index < size && count_hits < total_hits){
 
 		max_hit = hits[index];
-		std::cout << "MAX: " << max_hit << " - " << index << std::endl;
+		//std::cout << "MAX: " << max_hit << " - " << index << std::endl;
 		if(max_hit > 0){
-			for( int i = index + 3; i < index + 3 + max_hit && i < size; i++){
-				std::cout << "HIT: " << hits[i] << " - " << i << std::endl;
-				index++;
+
+			if(hits[index+1] < depth){
+				depth = hits[index+2];
+				hit = hits[index+3];
+			}
+
+			index += 3;
+			max_index = index + max_hit;
+
+			for( ; index < max_index; index++){
+				//std::cout << "HIT: " << hits[index] << " - " << index << std::endl;
+				count_hits++;
 			}
 		}
 		else
 			index += 3;
 	}
-*/
 
-	return -1;
+	return hit;
 }
 
+// -----------------------------------------------------------------------------
+
 int pick_element(int x, int y){
-	const int MAX_ITEMS = 100;
+	const int MAX_ITEMS = 512;
 
 	int hit = -1;
 
@@ -669,62 +676,43 @@ int pick_element(int x, int y){
 	GLuint hits[MAX_ITEMS];
 	GLint viewport[4];
 
-	// 1. Declarar buffer de selección
-	glSelectBuffer(MAX_ITEMS, hits);
-
-	// 2. Obtener los parámetros del viewport
 	glGetIntegerv(GL_VIEWPORT, viewport);
+	glSelectBuffer(MAX_ITEMS, hits);
 
 	// 3. Pasar OpenGL a modo selección
 	glRenderMode(GL_SELECT);
+	glInitNames();
+	glPushName(0);
 
 	// 4. Fijar la transformación de proyección para la seleccion
-	//glMatrixMode(GL_PROJECTION);
-	//glPushMatrix();
-	//glLoadIdentity();
-	//gluPickMatrix(x,(viewport[3] - y),5.0, 5.0, viewport);
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	gluPickMatrix((GLdouble) x, (GLdouble) (viewport[3]-y), 5.0f, 5.0f, viewport);
 
 	// Establecemos la proyección
 	set_projection();
 
+	glMatrixMode(GL_MODELVIEW);
+
 	// 5. Dibujar la escena con Nombres
 	draw();
+
+	// 7. Restablecer la transformación de proyección (sin gluPickMatrix)
+	glMatrixMode(GL_PROJECTION);
+  glPopMatrix();
+
+	glMatrixMode(GL_MODELVIEW);
 
 	// 6. Pasar OpenGL a modo render
 	num_hits = glRenderMode(GL_RENDER);
 
-	//glPopMatrix();
-
-	// 7. Restablecer la transformación de proyección (sin gluPickMatrix)
-	reset_projection();
-
-	std::cout << "NUM HITS: " << num_hits << std::endl;
-
 	// 8. Analizar el contenido del buffer de selección
-	hit = read_hit_buffer(hits,MAX_ITEMS);
-
-	for(int i = 0; i < 10; i++){
-		std::cout << hits[i] << std::endl;
-	}
-
-	std::cout << std::endl;
+	if(num_hits > 0)
+		hit = parse_hits(hits,MAX_ITEMS,num_hits);
 
 	return hit;
 }
-
-// -----------------------------------------------------------------------------
-
-void select_element(int x, int y){
-	int selected_element = pick_element(x,y);
-
-	if(selected_element != -1){
-		current_camera = 1;
-
-
-	}
-
-}
-
 
 // -----------------------------------------------------------------------------
 
@@ -739,8 +727,8 @@ void on_mouse_clicked(int button, int status, int x, int y){
 		y_prev = y;
 		x_prev = x;
 	}
-	else if(button == 2){
-		select_element(x,y);
+	else if(button == 2 && status == GLUT_DOWN){
+		selected_element = pick_element(x,y);
 	}
 	else if(button == 3){
 		if(projection_mode == PERSPECTIVE)
@@ -952,7 +940,8 @@ void normal_keys(unsigned char Tecla1,int x,int y){
 
 		// ESCAPE KEY
 		case 27:
-			current_camera = 0;
+			current_camera = 0;			// Set the normal camera
+			selected_element = 0;		// Reset the selection
 			break;
 
 	}
@@ -1178,6 +1167,7 @@ int main(int argc, char **argv)
 	delete stars_texture;
 	delete chess_texture;
 	delete can_texture;
+	delete gold_texture;
 
 	return 0;
 }

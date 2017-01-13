@@ -1,8 +1,15 @@
+// -----------------------------------------------------------------------------
+
 #include "scene.hpp"
 
+// -----------------------------------------------------------------------------
+
 Scene::Scene(){
+  selected_element = 0;
   init();
 }
+
+// -----------------------------------------------------------------------------
 
 void Scene::init(){
   char can_sup_name[] = "lata/lata-psup.ply";
@@ -53,6 +60,14 @@ void Scene::init(){
   can_sup.set_points(points,50);
 }
 
+// -----------------------------------------------------------------------------
+
+void Scene::set_selected(unsigned int ielement){
+  selected_element = ielement;
+}
+
+// -----------------------------------------------------------------------------
+
 void Scene::draw(DrawMode mode) const{
   bool texture_status = active_texture;
 
@@ -68,60 +83,69 @@ void Scene::draw(DrawMode mode) const{
   _vertex4<float> material2_diffuse(0.6,0.6,0.6,1);
   _vertex4<float> material2_specular(0.6,0.6,0.6,1);
 
-  glInitNames();
-  glPushName(1);
+  // TODO: Object3D - add names & draw_selected
+
+  glLoadName(1);
+  if(selected_element == 1)
+    set_texture(gold_texture);
+  else
+    set_texture(chess_texture);
 
   glPushMatrix();
-  //glTranslatef(-0.19,0.075,0.2);
-  //glScaled(0.05,0.05,0.05);
-  pawn.draw(mode);
-  glPopMatrix();
-
-  /*
-  glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,chess_texture -> tamX(),chess_texture -> tamY(),0,GL_RGB,GL_UNSIGNED_BYTE, (GLvoid *) (chess_texture -> leerPixels()));
-  glPushMatrix();
-  // No sé por qué pero es necesario invertir el tablero para que la luz
-  // sea coherente.
+  // No sé por qué pero es necesario invertir el tablero
+  // para que la luz sea coherente.
   glRotatef(180,0,0,1);
   board.draw(mode);
   glPopMatrix();
 
-  glPushName(2);
+  glLoadName(2);
+  if(selected_element == 2)
+    set_texture(gold_texture);
+  else
+    set_texture(grass_texture);
 
-  glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,grass_texture -> tamX(),grass_texture -> tamY(),0,GL_RGB,GL_UNSIGNED_BYTE, (GLvoid *) (grass_texture -> leerPixels()));
   glPushMatrix();
-  glTranslatef(0,-0.01,0);
+  glTranslatef(0,-0.025,0);
   glScaled(8,8,8);
   board.draw(mode);
   glPopMatrix();
 
-  glPushName(3);
+  glLoadName(3);
+  if(selected_element == 3)
+    set_texture(gold_texture);
+  else
+    set_texture(stars_texture);
 
-  glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,stars_texture -> tamX(),stars_texture -> tamY(),0,GL_RGB,GL_UNSIGNED_BYTE, (GLvoid *) (stars_texture -> leerPixels()));
   glPushMatrix();
   glScaled(8,8,8);
   sphere.draw(mode);
   glPopMatrix();
 
-  glPushName(4);
+  glLoadName(4);
+  if(selected_element == 4)
+    set_texture(gold_texture);
+  else
+    set_texture(can_texture);
 
   glPushMatrix();
   glTranslatef(0.8,0.2,0.8);
   glRotatef(180,1,0,0);
   glRotatef(-90,0,1,0);
-  glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,can_texture -> tamX(),can_texture -> tamY(),0,GL_RGB,GL_UNSIGNED_BYTE, (GLvoid *) (can_texture -> leerPixels()));
   glScaled(0.15,0.3,0.15);
   can_mid.draw(mode);
   glPopMatrix();
 
-  active_texture = false;
+  glLoadName(5);
+  if(selected_element == 5)
+    set_texture(gold_texture);
+  else{
+    active_texture = false;
 
-  glMaterialfv(GL_FRONT,GL_AMBIENT, (GLfloat *) &material2_ambient);
-  glMaterialfv(GL_FRONT,GL_DIFFUSE, (GLfloat *) &material2_diffuse);
-  glMaterialfv(GL_FRONT,GL_SPECULAR, (GLfloat *) &material2_specular);
-  glMaterialf(GL_FRONT,GL_SHININESS,10);
-
-  glPushName(5);
+    glMaterialfv(GL_FRONT,GL_AMBIENT, (GLfloat *) &material2_ambient);
+    glMaterialfv(GL_FRONT,GL_DIFFUSE, (GLfloat *) &material2_diffuse);
+    glMaterialfv(GL_FRONT,GL_SPECULAR, (GLfloat *) &material2_specular);
+    glMaterialf(GL_FRONT,GL_SHININESS,10);
+  }
 
   glPushMatrix();
   glTranslatef(0.8,-0.02,0.8);
@@ -129,12 +153,20 @@ void Scene::draw(DrawMode mode) const{
   can_sup.draw(mode);
   glPopMatrix();
 
-  glMaterialfv(GL_FRONT,GL_AMBIENT, (GLfloat *) &material0_ambient);
-  glMaterialfv(GL_FRONT,GL_DIFFUSE, (GLfloat *) &material0_diffuse);
-  glMaterialfv(GL_FRONT,GL_SPECULAR, (GLfloat *) &material0_specular);
-  glMaterialf(GL_FRONT,GL_SHININESS,50);
+  active_texture = texture_status;
 
-  glPushName(6);
+  glLoadName(6);
+
+  if(selected_element == 6)
+    set_texture(gold_texture);
+  else{
+    active_texture = false;
+
+    glMaterialfv(GL_FRONT,GL_AMBIENT, (GLfloat *) &material0_ambient);
+    glMaterialfv(GL_FRONT,GL_DIFFUSE, (GLfloat *) &material0_diffuse);
+    glMaterialfv(GL_FRONT,GL_SPECULAR, (GLfloat *) &material0_specular);
+    glMaterialf(GL_FRONT,GL_SHININESS,50);
+  }
 
   glPushMatrix();
   glTranslatef(-0.19,0.075,0.2);
@@ -142,18 +174,26 @@ void Scene::draw(DrawMode mode) const{
   pawn.draw(mode);
   glPopMatrix();
 
-  glMaterialfv(GL_FRONT,GL_AMBIENT, (GLfloat *) &material1_ambient);
-  glMaterialfv(GL_FRONT,GL_DIFFUSE, (GLfloat *) &material1_diffuse);
-  glMaterialfv(GL_FRONT,GL_SPECULAR, (GLfloat *) &material1_specular);
-  glMaterialf(GL_FRONT,GL_SHININESS,5);
+  active_texture = texture_status;
 
-  glPushName(7);
+  glLoadName(7);
+
+  if(selected_element == 7)
+    set_texture(gold_texture);
+  else{
+    active_texture = false;
+
+    glMaterialfv(GL_FRONT,GL_AMBIENT, (GLfloat *) &material1_ambient);
+    glMaterialfv(GL_FRONT,GL_DIFFUSE, (GLfloat *) &material1_diffuse);
+    glMaterialfv(GL_FRONT,GL_SPECULAR, (GLfloat *) &material1_specular);
+    glMaterialf(GL_FRONT,GL_SHININESS,5);
+  }
 
   glPushMatrix();
   glTranslatef(0.2,0.075,-0.19);
   glScaled(0.05,0.05,0.05);
   pawn.draw(mode);
   glPopMatrix();
-  */
+
   active_texture = texture_status;
 }

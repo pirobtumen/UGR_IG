@@ -6,6 +6,7 @@
 #ifndef __SCENE_HPP
 #define __SCENE_HPP
 
+#include "global.hpp"
 #include "drawable.hpp"
 #include "board.hpp"
 #include "polyhedron.hpp"
@@ -25,12 +26,14 @@ private:
   Polyhedron can_inf;
   Board board;
   Sphere sphere;
+  unsigned int selected_element;
 
   void init();
 
 public:
   Scene();
 
+  void set_selected(unsigned int ielement);
   void draw(DrawMode mode) const;
 
 };
