@@ -23,7 +23,7 @@ Sphere::Sphere(unsigned int profile_points){
 void Sphere::generate_profile(){
 
   const double radius = 0.5;
-  const double angle = -1*PI/profile_length;
+  const double angle = -1*PI/(profile_length-1);
 
   point p(0,0.5,0);
   point p2(p);
@@ -40,8 +40,6 @@ void Sphere::generate_profile(){
 
     points.push_back(p2);
   }
-
-  points.push_back(point(0,-0.5,0));
 
 }
 
