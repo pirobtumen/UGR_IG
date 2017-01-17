@@ -1060,6 +1060,9 @@ void draw_scene(void){
 
 void change_window_size(int Ancho1,int Alto1)
 {
+	Window_width = Ancho1/700;
+	Window_height = Alto1/700;
+
 	reset_projection();
 	glViewport(0,0,Ancho1,Alto1);
 	glutPostRedisplay();
