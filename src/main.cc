@@ -54,6 +54,7 @@
 #include "cube2.hpp"
 #include "revolutionsurface2.hpp"
 #include "scene.hpp"
+#include "scene2.hpp"
 
 #include "camera.hpp"
 
@@ -79,7 +80,7 @@ int UI_window_pos_x=50,UI_window_pos_y=50,UI_window_width=800,UI_window_height=8
 // -----------------------------------------------------------------------------
 
 
-enum DrawItem { CUBE, TETRAHEDRON, FILE_MODEL, REVOLUTION, WATT, BOARD, SCENE };
+enum DrawItem { CUBE, TETRAHEDRON, FILE_MODEL, REVOLUTION, WATT, BOARD, SCENE, SCENE2 };
 enum SelectIem { ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT };
 
 
@@ -115,6 +116,7 @@ Cylinder cylinder;
 
 Watt watt;
 Scene scene;
+Scene2 scene2;
 
 SelectIem selected_item = SIX;
 
@@ -452,6 +454,13 @@ void draw(){
 
 			// Set default texture/material
 			set_texture(earth_texture);
+			break;
+
+		case SCENE2:
+
+			scene2.set_selected(selected_element);
+			scene2.draw(draw_mode);
+
 			break;
 	}
 
@@ -981,6 +990,9 @@ void special_keys(int key,int x,int y)
 			break;
 		case GLUT_KEY_F7:
 			draw_item = SCENE;
+			break;
+		case GLUT_KEY_F8:
+			draw_item = SCENE2;
 			break;
 		}
 
