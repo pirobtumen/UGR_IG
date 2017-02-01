@@ -8,9 +8,9 @@ Scene2::Scene2(){
 
 void Scene2::draw(DrawMode mode) const{
 
-  const double start_x = -10;
-  const double start_y = -10;
-  const int num_model = 3;
+  const double start_x = -15;
+  const double start_y = -15;
+  const int num_model = 4;
   const double jump = 10;
 
   _vertex4<float> material1_ambient(0,0,0.8,1);
